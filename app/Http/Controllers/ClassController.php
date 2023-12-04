@@ -9,13 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class ClassController extends Controller
 {
-    public function list(Request $request){
+    public function list(Request $request)
+    {
         $data['getRecord'] = ClassModel::getRecord($request);
         $data['header_title'] = 'Class List';
         return view('admin.class.list', $data);
     }
 
-    public function add(){
+    public function add()
+    {
         $data['header_title'] = 'Add New Class';
         return view('admin.class.add', $data);
     }
