@@ -91,10 +91,8 @@
                                                 <td>{{ $record->email }}</td>
                                                 <td>{{ date('m-d-Y H:i A', strtotime($record->created_at)) }}</td>
                                                 <td>
-                                                    <a href="{{ url('admin/admin/edit/' . $record->id) }}"
-                                                        class="btn btn-primary">Edit</a>
-                                                    <a href="{{ url('admin/admin/delete/' . $record->id) }}"
-                                                        class="btn btn-danger">Delete</a>
+                                                    <a href="{{ url('admin/admin/edit/' . $record->id) }}" class="btn btn-primary">Edit</a>
+                                                    <a href="{{ url('admin/admin/delete/' . $record->id) }}"  class="btn btn-danger">Delete</a>
                                                 </td>
                                             </tr>
                                             @empty
