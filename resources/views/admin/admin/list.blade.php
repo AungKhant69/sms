@@ -84,17 +84,15 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($getRecord as $value)
+                                        @forelse ($getRecord as $record)
                                             <tr>
-                                                <td>{{ $value->id }}</td>
-                                                <td>{{ $value->name }}</td>
-                                                <td>{{ $value->email }}</td>
-                                                <td>{{ date('m-d-Y H:i A', strtotime($value->created_at)) }}</td>
+                                                <td>{{ $record->id }}</td>
+                                                <td>{{ $record->name }}</td>
+                                                <td>{{ $record->email }}</td>
+                                                <td>{{ date('m-d-Y H:i A', strtotime($record->created_at)) }}</td>
                                                 <td>
-                                                    <a href="{{ url('admin/admin/edit/' . $value->id) }}"
-                                                        class="btn btn-primary">Edit</a>
-                                                    <a href="{{ url('admin/admin/delete/' . $value->id) }}"
-                                                        class="btn btn-danger">Delete</a>
+                                                    <a href="{{ url('admin/admin/edit/' . $record->id) }}" class="btn btn-primary">Edit</a>
+                                                    <a href="{{ url('admin/admin/delete/' . $record->id) }}"  class="btn btn-danger">Delete</a>
                                                 </td>
                                             </tr>
                                             @empty
