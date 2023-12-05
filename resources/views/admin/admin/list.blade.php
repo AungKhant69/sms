@@ -1,16 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- @dd($data['getRecord']->total()) --}}
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Admin List (Total Results = {{ $getRecord->total() }})</h1>
+                        <h1>Admin List </h1>
                     </div>
 
                     <div class="col-sm-6" style="text-align: right">
+                        <a href="{{ url('admin/admin/deleted_list') }}" class="btn btn-primary">Show Deleted Admins</a>
                         <a href="{{ url('admin/admin/add') }}" class="btn btn-primary">Add New Admin</a>
                     </div>
 
@@ -25,8 +27,6 @@
 
             <div class="container-fluid">
                 <div class="row">
-
-                    <!-- /.col -->
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
@@ -71,7 +71,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">All Admins</h3>
                             </div>
-                            <!-- /.card-header -->
+
                             <div class="card-body p-0">
                                 <table class="table table-striped">
                                     <thead>
@@ -84,7 +84,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($getRecord as $record)
+                                        @forelse ($data['getRecord'] as $record)
                                             <tr>
                                                 <td>{{ $record->id }}</td>
                                                 <td>{{ $record->name }}</td>
@@ -92,7 +92,12 @@
                                                 <td>{{ date('m-d-Y H:i A', strtotime($record->created_at)) }}</td>
                                                 <td>
                                                     <a href="{{ url('admin/admin/edit/' . $record->id) }}" class="btn btn-primary">Edit</a>
-                                                    <a href="{{ url('admin/admin/delete/' . $record->id) }}"  class="btn btn-danger">Delete</a>
+                                                    {{-- Form for delete action --}}
+                                                    <form action="{{ url('admin/admin/delete/' . $record->id) }}" method="post" style="display:inline;">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete?')">Delete</button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                             @empty
@@ -104,7 +109,7 @@
                                     </tbody>
                                 </table>
                                 <div style="padding: 10px; float: left">
-                                    {{ $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() }}
+                                    {{-- {{ $data['getRecord']->appends(Illuminate\Support\Facades\Request::except('page'))->links() }} --}}
                                 </div>
 
 

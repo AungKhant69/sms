@@ -7,10 +7,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Class List</h1>
+                        <h1>Class List (Total Results = {{ $getRecord->total() }})</h1>
                     </div>
 
                     <div class="col-sm-6" style="text-align: right">
+                        <a href="{{ url('admin/class/deleted_list') }}" class="btn btn-primary">Show Deleted Classes</a>
                         <a href="{{ url('admin/class/add') }}" class="btn btn-primary">Add New Class</a>
                     </div>
 
@@ -86,7 +87,7 @@
                                                 <td>{{ $value->id }}</td>
                                                 <td>{{ $value->name }}</td>
                                                 <td>
-                                                    @if ($value->status == 0)
+                                                    @if ($value->status == 1)
                                                         Active
                                                     @else
                                                         Inactive
@@ -97,8 +98,11 @@
                                                 <td>
                                                     <a href="{{ url('admin/class/edit/' . $value->id) }}"
                                                         class="btn btn-primary">Edit</a>
-                                                    <a href="{{ url('admin/class/delete/' . $value->id) }}"
-                                                        class="btn btn-danger">Delete</a>
+                                                        <form action="{{ url('admin/class/delete/' . $value->id) }}" method="post" style="display:inline;">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete?')">Delete</button>
+                                                        </form>
                                                 </td>
                                             </tr>
                                             @empty

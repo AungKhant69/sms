@@ -24,7 +24,7 @@
 
             <div class="card card-primary">
 
-              <form method="post" action="">
+              <form method="post" action="{{ url('admin/class/add') }}">
                 {{ csrf_field() }}
                 <div class="card-body">
                    <div class="form-group">
@@ -35,8 +35,8 @@
                       <div class="form-group">
                         <label>Status</label>
                         <select class="form-control" name="status">
-                            <option value="0">Active</option>
-                            <option value="1">Inactive</option>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
                         </select>
 
                       </div>
@@ -53,11 +53,6 @@
             </div>
 
           </div>
-          <!--/.col (left) -->
-          <!-- right column -->
-
-          <!--/.col (right) -->
-        </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
     </section>

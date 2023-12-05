@@ -40,8 +40,14 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/admin/add', [AdminController::class, 'add']);
     Route::post('admin/admin/add', [AdminController::class, 'insert']);
     Route::get('admin/admin/edit/{id}', [AdminController::class, 'edit']);
-    Route::post('admin/admin/edit/{id}', [AdminController::class, 'update']);
-    Route::get('admin/admin/delete/{id}', [AdminController::class, 'delete']);
+    Route::match(['post', 'put'], 'admin/admin/edit/{id}', [AdminController::class, 'update']);
+    Route::delete('admin/admin/delete/{id}', [AdminController::class, 'delete']);
+
+    Route::get('admin/admin/restore/{id}', [AdminController::class, 'restore']);
+    Route::get('admin/admin/deleted_list', [AdminController::class, 'deletedList'])->name('admin.deletedList');
+    Route::post('admin/admin/restore/{id}', [AdminController::class, 'restore'])->name('admin.restore');
+    Route::delete('admin/admin/force-delete/{id}', [AdminController::class, 'forceDelete'])->name('admin.forceDelete');
+
 
     // student management routes
     Route::get('admin/student/list', [StudentController::class, 'list']);
@@ -54,8 +60,13 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/class/add', [ClassController::class, 'add']);
     Route::post('admin/class/add', [ClassController::class, 'insert']);
     Route::get('admin/class/edit/{id}', [ClassController::class, 'edit']);
-    Route::post('admin/class/edit/{id}', [ClassController::class, 'update']);
-    Route::get('admin/class/delete/{id}', [ClassController::class, 'delete']);
+    Route::match(['post', 'put'], 'admin/class/edit/{id}', [ClassController::class, 'update']);
+    Route::delete('admin/class/delete/{id}', [ClassController::class, 'delete']);
+
+    Route::get('admin/class/restore/{id}', [ClassController::class, 'restore']);
+    Route::get('admin/class/deleted_list', [ClassController::class, 'deletedList'])->name('class.deletedList');
+    Route::post('admin/class/restore/{id}', [ClassController::class, 'restore'])->name('class.restore');
+    Route::delete('admin/class/force-delete/{id}', [ClassController::class, 'forceDelete'])->name('class.forceDelete');
 
     // subject URL routes
     Route::get('admin/subject/list', [SubjectController::class, 'list']);

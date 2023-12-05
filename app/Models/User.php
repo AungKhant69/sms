@@ -8,11 +8,13 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 // use Illuminate\Http\Request;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -45,29 +47,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    static public function getSingle($id)
-    {
-        return User::find($id);
-    }
-
-    static public function getAdmin(Request $request)
-    {
-        $data =  self::select('users.*')->where('user_type', '=', 1)
-            ->where('is_delete', '=', 0);
-        if (!empty($request->get('name'))) {
-            $data = $data->where('name', 'like', '%' . $request->get('name') . '%');
-        }
-
-        if (!empty($request->get('email'))) {
-            $data = $data->where('email', 'like', '%' . $request->get('email') . '%');
-        }
-
-        if (!empty($request->get('date'))) {
-            $data = $data->whereDate('created_at', '=', $request->get('date'));
-        }
-        $data = $data->orderBy('id', 'desc')->paginate(10);
-        return $data;
-    }
 
     static public function getStudent(Request $request)
     {

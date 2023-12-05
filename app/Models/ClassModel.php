@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ClassModel extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $table = 'class';
 
     static public function getSingle($id)
     {
-        return self::find($id);
+        return self::findOrFail($id);
     }
 
     static public function getRecord(Request $request) //search bar for records
@@ -28,7 +30,8 @@ class ClassModel extends Model
             $record = $record->whereDate('class.created_at', '=', $request->get('date'));
         }
 
-        $record =  $record->where('class.is_delete', '=', '0')
+        $record =  $record->whereNull('class.deleted_at')
+                          ->where('class.status', '=', '1')
                           ->orderBy('class.id', 'desc')->paginate(10);
         return $record;
     }
@@ -36,8 +39,8 @@ class ClassModel extends Model
     static public function getClass(){
         $record  = ClassModel::select('class.*')
                                ->join('users', 'users.id', 'class.created_by')
-                               ->where('class.is_delete', '=', '0')
-                               ->where('class.status', '=', '0')
+                               ->whereNull('class.deleted_at')
+                               ->where('class.status', '=', '1')
                                ->orderBy('class.name', 'asc')->get();
         return $record;
     }

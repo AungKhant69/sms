@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ClassSubjectModel extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $table = 'class_subject';
 
     static public function getSingle($id){
-        return self::find($id);
+        return self::findOrFail($id);
     }
 
     static public function getRecord(Request $request)

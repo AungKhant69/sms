@@ -6,14 +6,27 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AdminController extends Controller
 {
+   public $pagination = 2;
+   public $data = [];
+   public function __construct()
+   {
+        $this->data = [
+            'header_title' => "Admin List",
+            'getRecord' => []
+        ];
+   }
+
     public function list(Request $request)
     {
-        $data['getRecord'] = User::getAdmin($request);
-        $data['header_title'] = 'Admin List';
-        return view('admin.admin.list', $data);
+        $this->data['getRecord'] = $this->getList($request);
+        // $data['header_title'] = 'Admin List';
+        return view('admin.admin.list')->with([
+            'data' => $this->data
+        ]);
     }
 
     public function add()
@@ -25,7 +38,7 @@ class AdminController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            'email' =>'required|email|unique:users' //users = table name
+            'email' => 'required|email|unique:users' //users = table name
         ]);
 
         $user = new User;
@@ -51,26 +64,101 @@ class AdminController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'email' =>'required|email|unique:users,email,' .$id //check duplicate email
-        ]);
+        try {
+            $request->validate([
+                'email' => 'required|email|unique:users,email,' . $id,
+            ]);
 
-        $user = User::getSingle($id);
-        $user->name = trim($request->name);
-        $user->email = trim($request->email);
-        if (!empty($request->password)) {
-            $user->password = Hash::make($request->password);
+            $user = User::getSingle($id);
+
+            if (!$user) {
+                return redirect('/admin/admin/list')->with('error', 'Admin not found.');
+            }
+
+            $user->name = trim($request->name);
+            $user->email = trim($request->email);
+
+            if (!empty($request->password)) {
+                $user->password = Hash::make($request->password);
+            }
+
+            $user->save();
+
+            return redirect('/admin/admin/list')->with('success', 'Admin data is updated successfully');
+        } catch (\Exception $e) {
+            return redirect('/admin/admin/list')->with('error', 'Error updating admin data: ' . $e->getMessage());
         }
-        $user->save();
-
-        return redirect('/admin/admin/list')->with('success', 'Admin data is updated successfully');
     }
 
-    public function delete($id){
-        $user = User::getSingle($id);
-        $user->is_delete = 1;
-        $user->save();
+    public function delete($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
 
-        return redirect('/admin/admin/list')->with('success', 'Admin data is deleted successfully ');
+            return redirect('/admin/admin/list')->with('success', 'Admin data is soft deleted successfully');
+        } catch (ModelNotFoundException $e) {
+            return redirect('/admin/admin/list')->with('error', 'Admin data not found');
+        }
+    }
+
+    public function deletedList()
+    {
+        try {
+            // Fetch soft-deleted records with user_type = 1
+            $softDeletedRecords = User::onlyTrashed()->where('user_type', 1)->get();
+
+            return view('admin.admin.deleted_list', compact('softDeletedRecords'));
+        } catch (\Exception $e) {
+            return redirect('/admin/admin/list')->with('error', 'Error retrieving soft-deleted records');
+        }
+    }
+
+
+    public function restore($id)
+    {
+        try {
+            // Restore soft-deleted record with user_type = 1
+            User::withTrashed()->where('id', $id)->where('user_type', 1)->restore();
+
+            return redirect('/admin/admin/list')->with('success', 'Admin data is restored successfully');
+        } catch (ModelNotFoundException $exception) {
+            return redirect('/admin/admin/list')->with('error', 'Admin data not found');
+        }
+    }
+
+    public function forceDelete($id)
+    {
+        try {
+            // Force delete soft-deleted record with user_type = 1
+            User::withTrashed()->where('id', $id)->where('user_type', 1)->forceDelete();
+
+            return redirect('/admin/admin/list')->with('success', 'Admin data is permanently deleted');
+        } catch (ModelNotFoundException $exception) {
+            return redirect('/admin/admin/list')->with('error', 'Admin data not found');
+        }
+    }
+
+    private function getList(Request $request)
+    {
+        $data = User::select('users.*')->where('user_type', '=', 1)->whereNull('deleted_at');
+
+        if (!empty($request->get('name'))) {
+            $data = $data->where('name', 'like', '%' . $request->get('name') . '%');
+        }
+
+        if (!empty($request->get('email'))) {
+            $data = $data->where('email', 'like', '%' . $request->get('email') . '%');
+        }
+
+        if (!empty($request->get('date'))) {
+            $data = $data->whereDate('created_at', '=', $request->get('date'));
+        }
+
+
+
+        $data->orderBy('id', 'desc')->paginate($this->pagination);
+
+        return $data;
     }
 }
