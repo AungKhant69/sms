@@ -63,8 +63,6 @@
                             </form>
                         </div>
 
-
-
                         @include('_message')
 
                         <div class="card ">
@@ -109,7 +107,10 @@
                                     </tbody>
                                 </table>
                                 <div style="padding: 10px; float: left">
-                                    {{-- {{ $data['getRecord']->appends(Illuminate\Support\Facades\Request::except('page'))->links() }} --}}
+                                    Total ({{ $data['getRecord']->total() }})
+                                </div>
+                                <div style="padding: 10px; float: right">
+                                    {{ $data['getRecord']->links() }}
                                 </div>
 
 
