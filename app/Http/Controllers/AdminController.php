@@ -10,22 +10,21 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AdminController extends Controller
 {
-   public $pagination = 2;
-   public $data = [];
-   public function __construct()
-   {
+    public $pagination = 90;
+    public $data = [];
+    public function __construct()
+    {
         $this->data = [
-            'header_title' => "Admin List",
-            'getRecord' => []
+            'header_title' => 'Admin List',
+            'getRecord' => [],
         ];
-   }
+    }
 
     public function list(Request $request)
     {
         $this->data['getRecord'] = $this->getList($request);
-        // $data['header_title'] = 'Admin List';
         return view('admin.admin.list')->with([
-            'data' => $this->data
+            'data' => $this->data,
         ]);
     }
 
@@ -38,10 +37,10 @@ class AdminController extends Controller
     public function insert(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|unique:users' //users = table name
+            'email' => 'required|email|unique:users', //users = table name
         ]);
 
-        $user = new User;
+        $user = new User();
         $user->name = trim($request->name);
         $user->email = trim($request->email);
         $user->password = Hash::make($request->password);
@@ -106,7 +105,9 @@ class AdminController extends Controller
     {
         try {
             // Fetch soft-deleted records with user_type = 1
-            $softDeletedRecords = User::onlyTrashed()->where('user_type', 1)->get();
+            $softDeletedRecords = User::onlyTrashed()
+                ->where('user_type', 1)
+                ->get();
 
             return view('admin.admin.deleted_list', compact('softDeletedRecords'));
         } catch (\Exception $e) {
@@ -114,12 +115,14 @@ class AdminController extends Controller
         }
     }
 
-
     public function restore($id)
     {
         try {
             // Restore soft-deleted record with user_type = 1
-            User::withTrashed()->where('id', $id)->where('user_type', 1)->restore();
+            User::withTrashed()
+                ->where('id', $id)
+                ->where('user_type', 1)
+                ->restore();
 
             return redirect('/admin/admin/list')->with('success', 'Admin data is restored successfully');
         } catch (ModelNotFoundException $exception) {
@@ -131,7 +134,10 @@ class AdminController extends Controller
     {
         try {
             // Force delete soft-deleted record with user_type = 1
-            User::withTrashed()->where('id', $id)->where('user_type', 1)->forceDelete();
+            User::withTrashed()
+                ->where('id', $id)
+                ->where('user_type', 1)
+                ->forceDelete();
 
             return redirect('/admin/admin/list')->with('success', 'Admin data is permanently deleted');
         } catch (ModelNotFoundException $exception) {
@@ -141,24 +147,25 @@ class AdminController extends Controller
 
     private function getList(Request $request)
     {
-        $data = User::select('users.*')->where('user_type', '=', 1)->whereNull('deleted_at');
-
-        if (!empty($request->get('name'))) {
-            $data = $data->where('name', 'like', '%' . $request->get('name') . '%');
+        $query = User::select('users.*')->where('user_type', '=', 0);
+        if ($request->name != '') {
+            $query->where('name', 'like', '%' . $request->name . '%');
         }
-
-        if (!empty($request->get('email'))) {
-            $data = $data->where('email', 'like', '%' . $request->get('email') . '%');
+        if ($request->email != '') {
+            $query->where('email', 'like', '%' . $request->email . '%');
         }
-
-        if (!empty($request->get('date'))) {
-            $data = $data->whereDate('created_at', '=', $request->get('date'));
+        if ($request->date != '') {
+            $query->whereDate('created_at', $request->date);
         }
+        $query->whereNull('deleted_at');
 
+        $paginator = $query->orderBy('id', 'desc')->paginate($this->pagination);
 
-
-        $data->orderBy('id', 'desc')->paginate($this->pagination);
-
-        return $data;
+        $paginator->appends([
+            'name' => $request->get('name'),
+            'email' => $request->get('email'),
+            'date' => $request->get('date'),
+        ]);
+        return $paginator;
     }
 }
