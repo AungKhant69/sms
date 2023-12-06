@@ -11,22 +11,21 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class AdminController extends Controller
 {
    public $pagination = 2;
-   public $data = [];
-   public function __construct()
-   {
-        $this->data = [
-            'header_title' => "Admin List",
-            'getRecord' => []
-        ];
-   }
+//    public $data = [];
+//    public function __construct()
+//    {
+//         $this->data = [
+//             'header_title' => "Admin List",
+//             'getRecord' => []
+//         ];
+//    }
 
     public function list(Request $request)
     {
-        $this->data['getRecord'] = $this->getList($request);
-        // $data['header_title'] = 'Admin List';
-        return view('admin.admin.list')->with([
-            'data' => $this->data
-        ]);
+        $data['getRecord'] = User::getList($request);
+        $data['header_title'] = 'Admin List';
+        return view('admin.admin.list', $data);
+
     }
 
     public function add()
@@ -154,7 +153,6 @@ class AdminController extends Controller
         if (!empty($request->get('date'))) {
             $data = $data->whereDate('created_at', '=', $request->get('date'));
         }
-
 
 
         $data->orderBy('id', 'desc')->paginate($this->pagination);

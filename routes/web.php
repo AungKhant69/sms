@@ -73,8 +73,13 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/subject/add', [SubjectController::class, 'add']);
     Route::post('admin/subject/add', [SubjectController::class, 'insert']);
     Route::get('admin/subject/edit/{id}', [SubjectController::class, 'edit']);
-    Route::post('admin/subject/edit/{id}', [SubjectController::class, 'update']);
-    Route::get('admin/subject/delete/{id}', [SubjectController::class, 'delete']);
+    Route::match(['post', 'put'], 'admin/subject/edit/{id}', [SubjectController::class, 'update']);
+    Route::delete('admin/subject/delete/{id}', [SubjectController::class, 'delete']);
+
+    Route::get('admin/subject/restore/{id}', [SubjectController::class, 'restore']);
+    Route::get('admin/subject/deleted_list', [SubjectController::class, 'deletedList'])->name('subject.deletedList');
+    Route::post('admin/subject/restore/{id}', [SubjectController::class, 'restore'])->name('subject.restore');
+    Route::delete('admin/subject/force-delete/{id}', [SubjectController::class, 'forceDelete'])->name('subject.forceDelete');
 
     //assign_subject URL routes
     Route::get('admin/assign_subject/list', [ClassSubjectController::class, 'list']);

@@ -24,20 +24,20 @@
 
             <div class="card card-primary">
 
-              <form method="post" action="{{ url('admin/class/edit/' . $getRecord->id) }}">
+              <form method="post" action="{{ url('admin/class/edit/' . $getList->id) }}">
                     @csrf
                     @method('PUT')
                 <div class="card-body">
                    <div class="form-group">
                         <label>Class Name</label>
-                        <input type="text" class="form-control" name="name" value="{{ $getRecord->name }}" required placeholder="Enter Class Name">
+                        <input type="text" class="form-control" name="name" value="{{ $getList->name }}" required placeholder="Enter Class Name">
                       </div>
 
                       <div class="form-group">
                         <label>Status</label>
                         <select class="form-control" name="status">
-                            <option {{ ($getRecord->status == 1) ? 'selected' : '' }} value="1">Active</option>
-                            <option {{ ($getRecord->status == 0) ? 'selected' : '' }} value="0">Inactive</option>
+                            <option {{ ($getList->status == 1) ? 'selected' : '' }} value="1">Active</option>
+                            <option {{ ($getList->status == 0) ? 'selected' : '' }} value="0">Inactive</option>
                         </select>
 
                       </div>

@@ -18,24 +18,6 @@ class ClassModel extends Model
         return self::findOrFail($id);
     }
 
-    static public function getRecord(Request $request) //search bar for records
-    {
-        $record  = ClassModel::select('class.*', 'users.name as created_by_name')
-                               ->join('users', 'users.id', 'class.created_by');
-        if (!empty($request->get('name'))) {
-            $record = $record->where('class.name', 'like', '%' . $request->get('name') . '%');
-        }
-
-        if (!empty($request->get('date'))) {
-            $record = $record->whereDate('class.created_at', '=', $request->get('date'));
-        }
-
-        $record =  $record->whereNull('class.deleted_at')
-                          ->where('class.status', '=', '1')
-                          ->orderBy('class.id', 'desc')->paginate(10);
-        return $record;
-    }
-
     static public function getClass(){
         $record  = ClassModel::select('class.*')
                                ->join('users', 'users.id', 'class.created_by')

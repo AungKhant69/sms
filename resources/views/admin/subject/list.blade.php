@@ -11,6 +11,7 @@
                     </div>
 
                     <div class="col-sm-6" style="text-align: right">
+                        <a href="{{ url('admin/subject/deleted_list') }}" class="btn btn-primary">Show Deleted Subjects</a>
                         <a href="{{ url('admin/subject/add') }}" class="btn btn-primary">Add New Subject</a>
                     </div>
 
@@ -77,7 +78,7 @@
 
                         <div class="card ">
                             <div class="card-header">
-                                <h3 class="card-title">All Subjects</h3>
+                                <h3 class="card-title">All Subjects (Total Results = {{ $getRecord->total() }})</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body p-0">
@@ -100,7 +101,7 @@
                                                 <td>{{ $value->name }}</td>
                                                 <td>{{ $value->type }}</td>
                                                 <td>
-                                                    @if ($value->status == 0)
+                                                    @if ($value->status == 1)
                                                         Active
                                                     @else
                                                         Inactive
@@ -111,8 +112,11 @@
                                                 <td>
                                                     <a href="{{ url('admin/subject/edit/' . $value->id) }}"
                                                         class="btn btn-primary">Edit</a>
-                                                    <a href="{{ url('admin/subject/delete/' . $value->id) }}"
-                                                        class="btn btn-danger">Delete</a>
+                                                        <form action="{{ url('admin/subject/delete/' . $value->id) }}" method="post" style="display:inline;">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete?')">Delete</button>
+                                                        </form>
                                                 </td>
                                             </tr>
                                         @empty

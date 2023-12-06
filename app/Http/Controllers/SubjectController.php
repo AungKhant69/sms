@@ -47,7 +47,6 @@ class SubjectController extends Controller
         $subject->name = trim($request->name);
         $subject->type = trim($request->type);
         $subject->status = trim($request->status);
-        // $subject->updated_by = Auth::user()->id;
         $subject->save();
 
         return redirect('/admin/subject/list')->with('success', 'Subject is Updated Successfully');
