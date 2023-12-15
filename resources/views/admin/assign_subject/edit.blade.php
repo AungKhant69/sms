@@ -23,15 +23,17 @@
 
                         <div class="card card-primary">
 
-                            <form method="post" action="">
-                                {{ csrf_field() }}
+                            <form method="post"
+                                action="{{ route('assign_subject.edit', ['id' => $data['getRecord']->id]) }}">
+                                @csrf
+                                @method('PUT')
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label>Class Name</label>
                                         <select class="form-control" name="class_id" required>
-                                            <option value="0">Select Class</option>
-                                            @foreach ($getClass as $class)
-                                                <option {{ $getRecord->class_id == $class->id ? 'selected' : '' }}
+                                            <option value="">Select Class</option>
+                                            @foreach ($data['getClass'] as $class)
+                                                <option {{ $data['getRecord']->class_id == $class->id ? 'selected' : '' }}
                                                     value="{{ $class->id }}">{{ $class->name }}</option>
                                             @endforeach
                                         </select>
@@ -41,14 +43,11 @@
                                     <div class="form-group">
                                         <label>Subject Name</label>
 
-                                        @foreach ($getSubject as $subject)
-                                            @php
-                                                $checked = in_array($subject->id, $getAssignSubjectID->pluck('subject_id')->toArray()) ? 'checked' : '';
-                                            @endphp
-
-                                            <div>
+                                        @foreach ($data['getSubject'] as $subject)
+                                           <div>
                                                 <label style="font-weight: normal">
-                                                    <input {{ $checked }} type="checkbox" value="{{ $subject->id }}" name="subject_id[]">
+                                                    <input @if (in_array($subject->id, $data['assignSubjectIDs'])) checked  @endif
+                                                    type="checkbox" value="{{ $subject->id }}" name="subject_id[]">
                                                     {{ $subject->name }}
                                                 </label>
                                             </div>
@@ -56,19 +55,17 @@
                                     </div>
 
 
-
                                     <div class="form-group">
                                         <label>Status</label>
-                                        <select class="form-control" name="status">
-                                            <option {{ $getRecord->status == 0 ? 'selected' : '' }} value="0">Active
-                                            </option>
-                                            <option {{ $getRecord->status == 1 ? 'selected' : '' }} value="1">Inactive
-                                            </option>
-                                        </select>
-
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="status" value="1" {{ ($data['getRecord']->status == 1) ? 'checked' : '' }}>
+                                            <label class="form-check-label">Active</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="status" value="0" {{ ($data['getRecord']->status == 0) ? 'checked' : '' }}>
+                                            <label class="form-check-label">Inactive</label>
+                                        </div>
                                     </div>
-
-
 
                                 </div>
 

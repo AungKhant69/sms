@@ -11,7 +11,8 @@
                     </div>
 
                     <div class="col-sm-6" style="text-align: right">
-                        <a href="{{ url('admin/class/add') }}" class="btn btn-primary">Add New Class</a>
+                        <a href="{{ route('class.deletedList') }}" class="btn btn-primary">Show Deleted Classes</a>
+                        <a href="{{ route('class.create') }}" class="btn btn-primary">Add New Class</a>
                     </div>
 
                 </div>
@@ -50,7 +51,7 @@
                                         <div class="form-group col-md-3">
                                             <button class="btn btn-primary" type="submit"
                                                 style="margin-top: 11%">Search</button>
-                                            <a href="{{ url('admin/class/list') }}" class="btn btn-success"
+                                            <a href="{{ route('class.index') }}" class="btn btn-success"
                                                 style="margin-top: 11%">Clear</a>
                                         </div>
                                     </div>
@@ -76,40 +77,48 @@
                                             <th>Name</th>
                                             <th>Status</th>
                                             <th>Created By</th>
+                                            <th>Updated By</th>
                                             <th>Created Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($getRecord as $value)
+                                        @forelse ($data['getRecord'] as $value)
                                             <tr>
                                                 <td>{{ $value->id }}</td>
                                                 <td>{{ $value->name }}</td>
                                                 <td>
-                                                    @if ($value->status == 0)
+                                                    @if ($value->status == 1)
                                                         Active
                                                     @else
                                                         Inactive
                                                     @endif
                                                 </td>
-                                                <td>{{ $value->created_by_name }}</td>
+                                                <td>{{ $value?->createdBy?->name }}</td>
+                                                <td>{{ $value?->updatedBy?->name }}</td>
                                                 <td>{{ date('m-d-Y H:i A', strtotime($value->created_at)) }}</td>
                                                 <td>
-                                                    <a href="{{ url('admin/class/edit/' . $value->id) }}"
-                                                        class="btn btn-primary">Edit</a>
-                                                    <a href="{{ url('admin/class/delete/' . $value->id) }}"
-                                                        class="btn btn-danger">Delete</a>
+                                                    <a href="{{ route('class.edit', ['id' => $value->id]) }}" class="btn btn-primary">Edit</a>
+
+                                                        <form action="{{ route('class.destroy', ['id' => $value->id]) }}" method="post" style="display:inline;">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete?')">Delete</button>
+                                                        </form>
                                                 </td>
                                             </tr>
                                             @empty
                                             <tr>
-                                                <td>No Matching Search Results</td>
+                                                <td colspan="7" class="text-center">No Matching Search Results</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                                 <div style="padding: 10px; float: left">
-                                    {{ $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() }}
+                                    Total ({{ $data['getRecord']->total() }})
+                                </div>
+                                <div style="padding: 10px; float: right">
+                                    {{ $data['getRecord']->links() }}
                                 </div>
 
 

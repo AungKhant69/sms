@@ -8,11 +8,13 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 // use Illuminate\Http\Request;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +25,19 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'class_id',
+        'parent_id',
+        'student_id',
+        'admission_number',
+        'admission_date',
+        'date_of_birth',
+        'gender',
+        'address',
+        'phone_number',
+        'user_type',
+        'profile_pic',
+        'created_by',
+        'updated_by',
     ];
 
     /**
@@ -45,37 +60,26 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    static public function getSingle($id)
+    protected $table = 'users';
+
+    public function createdBy()
     {
-        return User::find($id);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    static public function getAdmin(Request $request)
+    public function updatedBy()
     {
-        $data =  self::select('users.*')->where('user_type', '=', 1)
-            ->where('is_delete', '=', 0);
-        if (!empty($request->get('name'))) {
-            $data = $data->where('name', 'like', '%' . $request->get('name') . '%');
-        }
-
-        if (!empty($request->get('email'))) {
-            $data = $data->where('email', 'like', '%' . $request->get('email') . '%');
-        }
-
-        if (!empty($request->get('date'))) {
-            $data = $data->whereDate('created_at', '=', $request->get('date'));
-        }
-        $data = $data->orderBy('id', 'desc')->paginate(10);
-        return $data;
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
-    static public function getStudent(Request $request)
+    public function parent()
     {
-        $data =  self::select('users.*')->where('users.user_type', '=', 3)
-            ->where('users.is_delete', '=', 0);
+        return $this->belongsTo(User::class, 'parent_id');
+    }
 
-        $data = $data->orderBy('users.id', 'desc')->paginate(10);
-        return $data;
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
     }
 
     static public function getEmailSingle($email)
@@ -87,4 +91,6 @@ class User extends Authenticatable
     { //becoz we need to use inside controller
         return self::where('remember_token', '=', $remember_token)->first();
     }
+
+
 }

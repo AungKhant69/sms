@@ -23,34 +23,59 @@
 
                         <div class="card card-primary">
 
-                            <form method="post" action="">
-                                {{ csrf_field() }}
+                            <form method="post" action="{{ route('subject.update', ['id' => $data['getRecord']->id]) }}">
+                                @csrf
+                                @method('PUT')
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label>Subject Name</label>
                                         <input type="text" class="form-control" name="name" required
-                                          value="{{ $getRecord->name }}"  placeholder="Enter Subject Name">
+                                            value="{{ old('name', $data['getRecord']->name) }}"
+                                            placeholder="Enter Subject Name">
+                                        @error('name')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
 
                                     <div class="form-group">
                                         <label>Subject Type</label>
-                                        <select class="form-control" name="type" required>
-                                            <option value="">Select a type</option>
-                                            <option {{ $getRecord->type == 'Theory' ? 'selected' : '' }} value="Theory">Theory</option>
-                                            <option {{ $getRecord->type == 'Pratical' ? 'selected' : '' }} value="Pratical">Pratical</option>
 
-                                        </select>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="type" id="theoryRadio" value="theory"
+                                                {{ old('type', $data['getRecord']->type) == 'theory' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="theoryRadio">Theory</label>
+                                        </div>
 
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="type" id="practicalRadio" value="practical"
+                                                {{ old('type', $data['getRecord']->type) == 'practical' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="practicalRadio">Practical</label>
+                                        </div>
+
+                                        @error('type')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
+
+
 
                                     <div class="form-group">
                                         <label>Status</label>
-                                        <select class="form-control" name="status">
-                                            <option {{ $getRecord->status == 0 ? 'selected' : '' }} value="0">Active</option>
-                                            <option {{ $getRecord->status == 1 ? 'selected' : '' }} value="1">Inactive</option>
-                                        </select>
-
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="status" value="1"
+                                                {{ $data['getRecord']->status == 1 ? 'checked' : '' }}>
+                                            <label class="form-check-label">Active</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="status" value="0"
+                                                {{ $data['getRecord']->status == 0 ? 'checked' : '' }}>
+                                            <label class="form-check-label">Inactive</label>
+                                        </div>
+                                        @error('status')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
+
                                 </div>
 
                                 <div class="card-footer">

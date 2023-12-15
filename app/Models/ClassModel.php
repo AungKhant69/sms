@@ -2,43 +2,30 @@
 
 namespace App\Models;
 
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ClassModel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
     protected $table = 'class';
+    protected $fillable = ['name', 'created_by', 'updated_by', 'status'];
 
-    static public function getSingle($id)
+    public function subjects()
     {
-        return self::find($id);
+        return $this->hasMany(SubjectModel::class, 'class_id');
     }
 
-    static public function getRecord(Request $request) //search bar for records
+    public function createdBy()
     {
-        $record  = ClassModel::select('class.*', 'users.name as created_by_name')
-                               ->join('users', 'users.id', 'class.created_by');
-        if (!empty($request->get('name'))) {
-            $record = $record->where('class.name', 'like', '%' . $request->get('name') . '%');
-        }
-
-        if (!empty($request->get('date'))) {
-            $record = $record->whereDate('class.created_at', '=', $request->get('date'));
-        }
-
-        $record =  $record->where('class.is_delete', '=', '0')
-                          ->orderBy('class.id', 'desc')->paginate(10);
-        return $record;
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    static public function getClass(){
-        $record  = ClassModel::select('class.*')
-                               ->join('users', 'users.id', 'class.created_by')
-                               ->where('class.is_delete', '=', '0')
-                               ->where('class.status', '=', '0')
-                               ->orderBy('class.name', 'asc')->get();
-        return $record;
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }
+
