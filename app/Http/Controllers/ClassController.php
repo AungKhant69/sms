@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\ClassModel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,121 +11,160 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ClassController extends Controller
 {
-    public function list(Request $request)
+    public $pagination = 5;
+    public $data = [];
+    public function __construct()
     {
-        $data['getRecord'] = ClassModel::getSingle($request);
-        $data['header_title'] = 'Class List';
-        return view('admin.class.list', $data);
+        $this->data = [
+            'header_title' => 'Class List',
+            'getRecord' => [],
+        ];
     }
 
-    public function add()
+    public function index(Request $request)
     {
-        $data['header_title'] = 'Add New Class';
-        return view('admin.class.add', $data);
+        $this->data['getRecord'] = $this->getList($request);
+        return view('admin.class.list')->with([
+            'data' => $this->data,
+        ]);
     }
 
-    public function insert(Request $request)
+    public function create()
     {
-        $class = new ClassModel;
-        $class->name = $request->name;
-        $class->status = $request->status;
-        $class->created_by = Auth::user()->id;
-        $class->save();
+        $this->data['header_title'] = 'Add New Class';
+        return view('admin.class.add')->with([
+            'data' => $this->data,
+        ]);
+    }
 
-        return redirect('/admin/class/list')->with('success', 'New Class is Added Successfully');
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'status' => 'required|in:1,0',
+        ]);
+
+        try {
+            $class = ClassModel::create([
+                'name' => $request->name,
+                'status' => $request->status,
+                'created_by' => auth()->user()->id,
+            ]);
+
+            return redirect('/admin/class/list')->with('success', 'New Class is Added Successfully');
+        } catch (ModelNotFoundException $exception) {
+            return redirect('/admin/class/list')->with('error', $exception->getMessage());
+        } catch (Exception $e) {
+            return redirect('/admin/class/list')->with('error', $e->getMessage());
+        }
     }
 
     public function edit($id)
     {
-        $data['getRecord'] = ClassModel::getSingle($id);
-        if (!empty($data['getRecord'])) {
-            $data['header_title'] = 'Edit Class';
-            return view('admin.class.edit', $data);
-        } else {
-            abort(404);
+
+        $this->data['getRecord'] = ClassModel::findOrFail($id);
+        if (!empty($this->data['getRecord'])) {
+            $this->data['header_title'] = 'Edit Class';
+            return view('admin.class.edit')->with([
+                'data' => $this->data,
+            ]);
         }
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'string|max:255',
+            'status' => 'required|in:1,0',
+        ]);
+
         try {
-            $class = ClassModel::getSingle($id);
+            $class = ClassModel::findOrFail($id);
 
-            if (!$class) {
-                throw new \Exception("Class not found with ID: $id");
-            }
-
-            $class->name = $request->name;
-            $class->status = $request->status;
-            $class->save();
+            $class->update([
+                'name' => $request->name,
+                'status' => $request->status,
+                'updated_by' => auth()->user()->id,
+            ]);
 
             return redirect('/admin/class/list')->with('success', 'Class is Updated Successfully');
-        } catch (\Exception $e) {
-            return redirect('/admin/class/list')->with('error', 'Error updating class: ' . $e->getMessage());
+        } catch (ModelNotFoundException $exception) {
+            return redirect('/admin/class/list')->with('error', $exception->getMessage());
+        } catch (Exception $e) {
+            return redirect('/admin/class/list')->with('error', $e->getMessage());
         }
     }
 
 
-    public function delete($id)
+    public function destroy($id)
     {
-        try{
+        try {
             $class = ClassModel::findOrFail($id);
             $class->delete();
 
             return redirect('/admin/class/list')->with('success', 'Class is soft Deleted Successfully');
-        } catch (ModelNotFoundException $e) {
-            return redirect('/admin/class/list')->with('error', 'Class data not found');
+        } catch (ModelNotFoundException $exception) {
+            return redirect('/admin/class/list')->with('error', $exception->getMessage());
+        } catch (Exception $e) {
+            return redirect('/admin/class/list')->with('error', $e->getMessage());
         }
     }
 
     public function deletedList()
-  {
-      try {
-          $softDeletedRecords = ClassModel::onlyTrashed()->whereNotNull('class.deleted_at')->get();
-
-          return view('admin.class.deleted_list', compact('softDeletedRecords'));
-      } catch (\Exception $e) {
-          return redirect('/admin/class/list')->with('error', 'Error retrieving soft-deleted records');
-      }
-  }
-
-  public function restore($id)
     {
         try {
-            ClassModel::withTrashed()->where('id', $id)->whereNotNull('class.deleted_at')->restore();
+            $softDeletedRecords = ClassModel::onlyTrashed()->get();
+
+            return view('admin.class.deleted_list', compact('softDeletedRecords'));
+        } catch (ModelNotFoundException $exception) {
+            return redirect('/admin/class/list')->with('error', $exception->getMessage());
+        } catch (Exception $e) {
+            return redirect('/admin/class/list')->with('error', $e->getMessage());
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            ClassModel::withTrashed()->where('id', $id)->restore();
 
             return redirect('/admin/class/list')->with('success', 'Class data is restored successfully');
         } catch (ModelNotFoundException $exception) {
-            return redirect('/admin/class/list')->with('error', 'Class data not found');
+            return redirect('/admin/class/list')->with('error', $exception->getMessage());
+        } catch (Exception $e) {
+            return redirect('/admin/class/list')->with('error', $e->getMessage());
         }
     }
 
     public function forceDelete($id)
     {
         try {
-            ClassModel::withTrashed()->where('id', $id)->whereNotNull('class.deleted_at')->forceDelete();
+            ClassModel::withTrashed()->where('id', $id)->forceDelete();
 
             return redirect('/admin/class/list')->with('success', 'Class data is permanently deleted');
         } catch (ModelNotFoundException $exception) {
-            return redirect('/admin/class/list')->with('error', 'Class data not found');
+            return redirect('/admin/class/list')->with('error', $exception->getMessage());
+        } catch (Exception $e) {
+            return redirect('/admin/class/list')->with('error', $e->getMessage());
         }
     }
 
     private function getList(Request $request)
     {
-        $record  = ClassModel::select('class.*', 'users.name as created_by_name')
-                               ->join('users', 'users.id', 'class.created_by');
+        $query  = ClassModel::with('createdBy', 'updatedBy')->whereNull('class.deleted_at');
         if (!empty($request->get('name'))) {
-            $record = $record->where('class.name', 'like', '%' . $request->get('name') . '%');
+            $query = $query->where('class.name', 'like', '%' . $request->get('name') . '%');
         }
 
         if (!empty($request->get('date'))) {
-            $record = $record->whereDate('class.created_at', '=', $request->get('date'));
+            $query = $query->whereDate('class.created_at', '=', $request->get('date'));
         }
 
-        $record =  $record->whereNull('class.deleted_at')
-                          ->where('class.status', '=', '1')
-                          ->orderBy('class.id', 'desc')->paginate(5);
-        return $record;
+        $paginator = $query->orderBy('class.id', 'desc')->paginate($this->pagination);
+        $paginator->appends([
+            'name' => $request->get('name'),
+            'date' => $request->get('date'),
+        ]);
+        return $paginator;
     }
 }

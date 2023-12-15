@@ -53,7 +53,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5">No soft deleted records found.</td>
+                                            <td colspan="5" class="text-center">No soft deleted records found.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

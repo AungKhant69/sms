@@ -25,6 +25,19 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'class_id',
+        'parent_id',
+        'student_id',
+        'admission_number',
+        'admission_date',
+        'date_of_birth',
+        'gender',
+        'address',
+        'phone_number',
+        'user_type',
+        'profile_pic',
+        'created_by',
+        'updated_by',
     ];
 
     /**
@@ -47,14 +60,26 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $table = 'users';
 
-    static public function getStudent(Request $request)
+    public function createdBy()
     {
-        $data =  self::select('users.*')->where('users.user_type', '=', 3)
-            ->where('users.is_delete', '=', 0);
+        return $this->belongsTo(User::class, 'created_by');
+    }
 
-        $data = $data->orderBy('users.id', 'desc')->paginate(10);
-        return $data;
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
     }
 
     static public function getEmailSingle($email)
@@ -66,4 +91,6 @@ class User extends Authenticatable
     { //becoz we need to use inside controller
         return self::where('remember_token', '=', $remember_token)->first();
     }
+
+
 }

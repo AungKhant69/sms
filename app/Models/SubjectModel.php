@@ -2,49 +2,37 @@
 
 namespace App\Models;
 
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SubjectModel extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
+
     protected $table = 'subject';
+    protected $fillable = ['name', 'type', 'status', 'created_by', 'updated_by'];
 
-    static public function getSingle($id)
+    public function class()
     {
-        return self::findOrFail($id);
+        return $this->belongsTo(ClassModel::class, 'class_id');
     }
 
-    static public function getRecord(Request $request) //search bar for records
+    public function classSubjects()
     {
-        $record  = SubjectModel::select('subject.*', 'users.name as created_by_name')
-                               ->join('users', 'users.id', 'subject.created_by');
-        if (!empty($request->get('name'))) {
-            $record = $record->where('subject.name', 'like', '%' . $request->get('name') . '%');
-        }
-
-        if (!empty($request->get('type'))) {
-            $record = $record->where('subject.type', 'like', '%' . $request->get('type') . '%');
-        }
-
-        if (!empty($request->get('date'))) {
-            $record = $record->whereDate('subject.created_at', '=', $request->get('date'));
-        }
-
-        $record =  $record->where('subject.is_delete', '=', '0')
-                          ->orderBy('subject.id', 'desc')->paginate(6);
-        return $record;
+        return $this->hasMany(ClassSubjectModel::class, 'subject_id');
     }
 
-    static public function getSubject(){
-        $record  = SubjectModel::select('subject.*')
-                               ->join('users', 'users.id', 'subject.created_by')
-                               ->where('subject.is_delete', '=', '0')
-                               ->where('subject.status', '=', '0')
-                               ->orderBy('subject.name', 'asc')->get();
-        return $record;
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }
+
+
+

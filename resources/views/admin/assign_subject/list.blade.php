@@ -11,6 +11,8 @@
                     </div>
 
                     <div class="col-sm-6" style="text-align: right">
+                        <a href="{{ url('admin/assign_subject/deleted_list') }}" class="btn btn-primary">Show Deleted Assigned
+                            Subjects</a>
                         <a href="{{ url('admin/assign_subject/add') }}" class="btn btn-primary">Assign a new Subject</a>
                     </div>
 
@@ -37,14 +39,16 @@
                                     <div class="row">
                                         <div class="form-group col-md-3">
                                             <label>Class Name</label>
-                                            <input type="text" class="form-control" value="{{ Request::get('class_name') }}"
-                                                name="class_name" placeholder="Enter Class Name">
+                                            <input type="text" class="form-control"
+                                                value="{{ Request::get('class_name') }}" name="class_name"
+                                                placeholder="Enter Class Name">
                                         </div>
 
                                         <div class="form-group col-md-3">
                                             <label>Subject Name</label>
-                                            <input type="text" class="form-control" value="{{ Request::get('subject_name') }}"
-                                                name="subject_name" placeholder="Enter Subject Name">
+                                            <input type="text" class="form-control"
+                                                value="{{ Request::get('subject_name') }}" name="subject_name"
+                                                placeholder="Enter Subject Name">
                                         </div>
 
                                         <div class="form-group col-md-3">
@@ -83,43 +87,54 @@
                                             <th>Subject Name</th>
                                             <th>Status</th>
                                             <th>Created By</th>
+                                            <th>Updated By</th>
                                             <th>Created Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($getRecord as $value)
-                                        <tr>
-                                            <td>{{ $value->id }}</td>
-                                            <td>{{ $value->class_name }}</td>
-                                            <td>{{ $value->subject_name }}</td>
-                                            <td>
-                                                @if ($value->status == 0)
-                                                    Active
-                                                @else
-                                                    Inactive
-                                                @endif
-                                            </td>
-                                            <td>{{ $value->created_by_name }}</td>
-                                            <td>{{ date('m-d-Y H:i A', strtotime($value->created_at)) }}</td>
-                                            <td>
-                                                <a href="{{ url('admin/assign_subject/edit/' . $value->id) }}"
-                                                    class="btn btn-primary">Edit</a>
-                                                <a href="{{ url('admin/assign_subject/edit_single/' . $value->id) }}"
-                                                    class="btn btn-primary">Edit Single</a>
-                                                <a href="{{ url('admin/assign_subject/delete/' . $value->id) }}"
-                                                    class="btn btn-danger">Delete</a>
-                                            </td>
-                                        </tr>
+                                        @forelse ($data['getRecord'] as $value)
+                                            <tr>
+                                                <td>{{ $value->id }}</td>
+                                                <td>{{ $value?->classData?->name }}</td>
+                                                <td>{{ $value?->subjectData?->name }}</td>
+
+                                                <td>
+                                                    @if ($value->status == 1)
+                                                        Active
+                                                    @else
+                                                        Inactive
+                                                    @endif
+                                                </td>
+                                                <td>{{ $value?->createdBy?->name }}</td>
+                                                <td>{{ $value?->updatedBy?->name }}</td>
+                                                <td>{{ date('m-d-Y H:i A', strtotime($value->created_at)) }}</td>
+                                                <td>
+                                                    <a href="{{ route('assign_subject.edit', ['id' => $value->id]) }}"
+                                                        class="btn btn-primary">Edit</a>
+
+                                                    <form
+                                                        action="{{ route('assign_subject.delete', ['id' => $value->id]) }}"
+                                                        method="post" style="display:inline;">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="btn btn-danger"
+                                                            onclick="return confirm('Are you sure you want to delete?')">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
                                         @empty
-                                        <tr>
-                                            <td>No Matching Search Results</td>
-                                        </tr>
-                                    @endforelse
+                                            <tr>
+                                                <td colspan="8" class="text-center">No Matching Search Results</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                                 <div style="padding: 10px; float: left">
-                                    {{ $getRecord->appends(Illuminate\Support\Facades\Request::except('page'))->links() }}
+                                    Total ({{ $data['getRecord']->total() }})
+                                </div>
+                                <div style="padding: 10px; float: right">
+                                    {{ $data['getRecord']->links() }}
                                 </div>
 
 
