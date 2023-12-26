@@ -15,7 +15,7 @@ class StoreSubjectRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'type' => 'required|in:Theory,Practical',
+            'type' => 'required|in:theory,practical',
             'status' => 'required|in:1,0',
         ];
     }

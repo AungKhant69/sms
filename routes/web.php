@@ -2,15 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ClassSubjectController;
+use App\Http\Controllers\AssignClassTeacherController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +48,9 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('admin/edit/{id}', [AdminController::class, 'edit'])->name('admin.edit');
     Route::put('admin/edit/{id}', [AdminController::class, 'update'])->name('admin.update');
     Route::delete('admin/delete/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
+
+    Route::get('/profile', [ProfileController::class, 'showSettings'])->name('admin_settings.index');
+    Route::patch('/profile', [ProfileController::class, 'updateSettings'])->name('admin_settings.update');
 
     Route::get('admin/deleted_list', [AdminController::class, 'deletedList'])->name('admin.deletedList');
     Route::post('admin/restore/{id}', [AdminController::class, 'restore'])->name('admin.restore');
@@ -127,35 +133,67 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::post('assign_subject/restore/{id}', [ClassSubjectController::class, 'restore'])->name('assign_subject.restore');
     Route::delete('assign_subject/force-delete/{id}', [ClassSubjectController::class, 'forceDelete'])->name('assign_subject.forceDelete');
 
+    //assign_class_teacher URL routes
+    Route::get('assign_class_teacher/list', [AssignClassTeacherController::class, 'index'])->name('assign_class_teacher.index');
+    Route::get('assign_class_teacher/add', [AssignClassTeacherController::class, 'create'])->name('assign_class_teacher.create');
+    Route::post('assign_class_teacher/add', [AssignClassTeacherController::class, 'store'])->name('assign_class_teacher.store');
+    Route::get('assign_class_teacher/edit/{id}', [AssignClassTeacherController::class, 'edit'])->name('assign_class_teacher.edit');
+    Route::put('assign_class_teacher/edit/{id}', [AssignClassTeacherController::class, 'update'])->name('assign_class_teacher.update');
+    Route::delete('assign_class_teacher/delete/{id}', [AssignClassTeacherController::class, 'destroy'])->name('assign_class_teacher.destroy');
 
-    //change password
-    Route::get('change_password', [UserController::class, 'change_password']);
-    Route::post('change_password', [UserController::class, 'update_change_password']);
+    Route::get('assign_class_teacher/deleted_list', [AssignClassTeacherController::class, 'deletedList'])->name('assign_class_teacher.deletedList');
+    Route::post('assign_class_teacher/restore/{id}', [AssignClassTeacherController::class, 'restore'])->name('assign_class_teacher.restore');
+    Route::delete('assign_class_teacher/force-delete/{id}', [AssignClassTeacherController::class, 'forceDelete'])->name('assign_class_teacher.forceDelete');
+
+    // Examinations URL routes
+    Route::get('examinations/exam/list', [ExamController::class, 'index'])->name('exam.index');
+    Route::get('examinations/exam/add', [ExamController::class, 'create'])->name('exam.create');
+    Route::post('examinations/exam/add', [ExamController::class, 'store'])->name('exam.store');
+    Route::get('examinations/exam/edit/{id}', [ExamController::class, 'edit'])->name('exam.edit');
+    Route::put('examinations/exam/edit/{id}', [ExamController::class, 'update'])->name('exam.update');
+    Route::delete('examinations/exam/delete/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
+
+    Route::get('examinations/exam/deleted_list', [ExamController::class, 'deletedList'])->name('exam.deletedList');
+    Route::post('examinations/exam/restore/{id}', [ExamController::class, 'restore'])->name('exam.restore');
+    Route::delete('examinations/exam/force-delete/{id}', [ExamController::class, 'forceDelete'])->name('exam.forceDelete');
+
+    Route::get('examinations/exam_schedule', [ExamController::class, 'exam_schedule'])->name('exam_schedule.index');
+    Route::post('examinations/exam_schedule_store', [ExamController::class, 'exam_schedule_store'])->name('exam_schedule.store');
+
+    Route::get('examinations/marks_register', [ExamController::class, 'marks_register'])->name('exam_marks.index');
+
 });
 
 // ******   Teacher routes   ******//
-Route::group(['middleware' => 'teacher'], function () {
-    Route::get('teacher/dashboard', [DashboardController::class, 'dashboard']);
+Route::group(['middleware' => 'teacher', 'prefix' => 'teacher'], function () {
+    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('teacher.dashboard');
 
-    //change password
-    Route::get('teacher/change_password', [UserController::class, 'change_password']);
-    Route::post('teacher/change_password', [UserController::class, 'update_change_password']);
+    Route::get('my_class_subject', [AssignClassTeacherController::class, 'myClassSubject'])->name('teacher.my_class_subject');
+    Route::get('my_student', [StudentController::class, 'myStudent'])->name('teacher.myStudent');
+
+    Route::get('/profile', [ProfileController::class, 'showSettings'])->name('admin_settings.index');
+    Route::patch('/profile', [ProfileController::class, 'updateSettings'])->name('admin_settings.update');
+
 });
 
 // ******   Student routes   ******//
-Route::group(['middleware' => 'student'], function () {
-    Route::get('student/dashboard', [DashboardController::class, 'dashboard']);
+Route::group(['middleware' => 'student', 'prefix' => 'student'], function () {
+    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('student.dashboard');
 
-    //change password
-    Route::get('student/change_password', [UserController::class, 'change_password']);
-    Route::post('student/change_password', [UserController::class, 'update_change_password']);
+    Route::get('my_subject', [SubjectController::class, 'studentSubject'])->name('student.mySubject');
+
+    Route::get('/profile', [ProfileController::class, 'showSettings'])->name('admin_settings.index');
+    Route::patch('/profile', [ProfileController::class, 'updateSettings'])->name('admin_settings.update');
+
 });
 
 // ******   Parent routes   ******//
-Route::group(['middleware' => 'parent'], function () {
-    Route::get('parent/dashboard', [DashboardController::class, 'dashboard']);
+Route::group(['middleware' => 'parent', 'prefix' => 'parent'], function () {
+    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('parent.dashboard');
 
-    //change password
-    Route::get('parent/change_password', [UserController::class, 'change_password']);
-    Route::post('parent/change_password', [UserController::class, 'update_change_password']);
+    Route::get('my_student', [ParentController::class, 'myStudentParent'])->name('parent.my_student');
+    Route::get('my_student/subject/{student_id}', [SubjectController::class, 'ParentStudentSubject'])->name('parent.ParentStudentSubject');
+
+    Route::get('/profile', [ProfileController::class, 'showSettings'])->name('admin_settings.index');
+    Route::patch('/profile', [ProfileController::class, 'updateSettings'])->name('admin_settings.update');
 });

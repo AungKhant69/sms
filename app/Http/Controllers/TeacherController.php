@@ -15,10 +15,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TeacherController extends Controller
 {
-    public $pagination = 5;
+    public $pagination = '';
     public $data = [];
     public function __construct()
     {
+        $config = FormHelper::getConfig();
+        $this->pagination = $config['paginate'];
         $this->data = [
             'header_title' => 'Teachers List',
             'getRecord' => [],

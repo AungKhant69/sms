@@ -11,15 +11,14 @@
                     </div>
 
                     <div class="col-sm-6" style="text-align: right">
-                        <a href="{{ url('admin/assign_subject/deleted_list') }}" class="btn btn-primary">Show Deleted Assigned
+                        <a href="{{ route('assign_subject.deletedList') }}" class="btn btn-primary">Show Deleted Assigned
                             Subjects</a>
-                        <a href="{{ url('admin/assign_subject/add') }}" class="btn btn-primary">Assign a new Subject</a>
+                        <a href="{{ route('assign_subject.create') }}" class="btn btn-primary">Assign a new Subject</a>
                     </div>
 
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-
 
 
         <!-- Main content -->
@@ -60,7 +59,7 @@
                                         <div class="form-group col-md-3">
                                             <button class="btn btn-primary" type="submit"
                                                 style="margin-top: 11%">Search</button>
-                                            <a href="{{ url('admin/assign_subject/list') }}" class="btn btn-success"
+                                            <a href="{{ route('assign_subject.index') }}" class="btn btn-success"
                                                 style="margin-top: 11%">Clear</a>
                                         </div>
                                     </div>
@@ -99,22 +98,26 @@
                                                 <td>{{ $value?->classData?->name }}</td>
                                                 <td>{{ $value?->subjectData?->name }}</td>
 
-                                                <td>
+                                                <td style="color: {{ $value->status == 1 ? '#4caf50' : 'red' }}">
                                                     @if ($value->status == 1)
+                                                        <span
+                                                            style="display: inline-block; width: 10px; height: 10px; background-color: #4caf50; border-radius: 50%; margin-left: 5px;"></span>
                                                         Active
                                                     @else
+                                                        <span
+                                                            style="display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; margin-left: 5px;"></span>
                                                         Inactive
                                                     @endif
                                                 </td>
                                                 <td>{{ $value?->createdBy?->name }}</td>
                                                 <td>{{ $value?->updatedBy?->name }}</td>
-                                                <td>{{ date('m-d-Y H:i A', strtotime($value->created_at)) }}</td>
+                                                <td>{{ $value->created_at->format(auth()->user()->date_format) }}</td>
                                                 <td>
                                                     <a href="{{ route('assign_subject.edit', ['id' => $value->id]) }}"
                                                         class="btn btn-primary">Edit</a>
 
                                                     <form
-                                                        action="{{ route('assign_subject.delete', ['id' => $value->id]) }}"
+                                                        action="{{ route('assign_subject.destroy', ['id' => $value->id]) }}"
                                                         method="post" style="display:inline;">
                                                         @csrf
                                                         @method('delete')

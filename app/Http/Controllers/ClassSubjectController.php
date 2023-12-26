@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Helper\FormHelper;
 use App\Models\ClassModel;
 use App\Models\SubjectModel;
 use Illuminate\Http\Request;
@@ -13,10 +14,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ClassSubjectController extends Controller
 {
-    public $pagination = 6;
+    public $pagination = '';
     public $data = [];
     public function __construct()
     {
+        $config = FormHelper::getConfig();
+        $this->pagination = $config['paginate'];
         $this->data = [
             'header_title' => 'Assigned Subjects List',
             'getRecord' => [],
@@ -85,8 +88,6 @@ class ClassSubjectController extends Controller
             ]);
         }
     }
-
-
 
     public function update(Request $request)
     {
@@ -164,8 +165,7 @@ class ClassSubjectController extends Controller
 
     private function getRecord(Request $request)
     {
-        $query = ClassSubjectModel::with(['classData', 'subjectData', 'createdBy', 'updatedBy'])
-            ->whereNull('class_subject.deleted_at');
+        $query = ClassSubjectModel::with(['classData', 'subjectData', 'createdBy', 'updatedBy']);
 
         if (!empty($request->get('class_name'))) {
             $query->whereHas('classData', function ($subQuery) use ($request) {
@@ -194,7 +194,6 @@ class ClassSubjectController extends Controller
         return $paginator;
     }
 
-
     private function getClass()
     {
         $record = ClassModel::select('id', 'name')
@@ -222,6 +221,6 @@ class ClassSubjectController extends Controller
 
     private function getAssignSubjectID($class_id)
     {
-        return ClassSubjectModel::where('class_id', '=', $class_id)->whereNull('deleted_at')->pluck('subject_id')->toArray();
+        return ClassSubjectModel::where('class_id', '=', $class_id)->pluck('subject_id')->toArray();
     }
 }

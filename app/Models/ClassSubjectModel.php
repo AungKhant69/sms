@@ -32,6 +32,7 @@ class ClassSubjectModel extends Model
     {
         return $this->belongsTo(SubjectModel::class, 'subject_id');
     }
+
 }
 
 

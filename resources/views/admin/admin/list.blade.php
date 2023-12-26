@@ -98,7 +98,8 @@
                                                 <td>{{ $record->email }}</td>
                                                 <td>{{ $record?->createdBy?->name }}</td>
                                                 <td>{{ $record?->updatedBy?->name }}</td>
-                                                <td>{{ date('m-d-Y H:i A', strtotime($record->created_at)) }}</td>
+                                                <td>{{ $record->created_at->format(auth()->user()->date_format) }}</td>
+                                                {{-- <td>{{ date('m-d-Y H:i A', strtotime($record->created_at)) }}</td> --}}
                                                 <td>
                                                     <a href="{{ route('admin.edit', ['id' => $record->id]) }}" class="btn btn-primary">Edit</a>
                                                     {{-- Form for delete action --}}

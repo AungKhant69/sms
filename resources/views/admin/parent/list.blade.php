@@ -107,7 +107,7 @@
                                                 <td>{{ $value->phone_number }}</td>
                                                 <td>{{ $value?->createdBy?->name }}</td>
                                                 <td>{{ $value?->updatedBy?->name }}</td>
-                                                <td>{{ date('m-d-Y H:i A', strtotime($value->created_at)) }}</td>
+                                                <td>{{ $value->created_at->format(auth()->user()->date_format) }}</td>
                                                 <td>
                                                     <a href="{{ route('admin_parent.edit', ['id' => $value->id]) }}"
                                                         class="btn btn-primary">Edit</a>

@@ -13,7 +13,7 @@ class SubjectModel extends Model
     protected $table = 'subject';
     protected $fillable = ['name', 'type', 'status', 'created_by', 'updated_by'];
 
-    public function class()
+    public function classData()
     {
         return $this->belongsTo(ClassModel::class, 'class_id');
     }

@@ -27,6 +27,8 @@ class User extends Authenticatable
         'password',
         'class_id',
         'parent_id',
+        'teacher_id',
+        'date_format',
         'student_id',
         'admission_number',
         'admission_date',
@@ -81,6 +83,26 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'student_id');
     }
+
+    // public function myStudent()
+    // {
+    //     return $this->hasMany(User::class, 'class_id');
+    // }
+
+    public function assignClassTeacher()
+    {
+        return $this->hasOne(AssignClassTeacherModel::class, 'teacher_id');
+    }
+
+    public function classData()
+    {
+        return $this->belongsTo(ClassModel::class, 'class_id');
+    }
+
+    // public function assignedClasses()
+    // {
+    //     return $this->belongsToMany(ClassModel::class, 'assign_class_teacher', 'teacher_id', 'class_id');
+    // }
 
     static public function getEmailSingle($email)
     { //becoz we need to use inside controller

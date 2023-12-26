@@ -95,7 +95,7 @@
                                                 <td>{{ $value->name }}</td>
                                                 <td>{{ $value?->parent?->name }}</td>
                                                 <td>{{ $value->email }}</td>
-                                                <td>{{ date('m-d-Y H:i A', strtotime($value->created_at)) }}</td>
+                                                <td>{{ $value->created_at->format(auth()->user()->date_format) }}</td>
                                                 <td>
                                                     <form
                                                         action="{{ route('admin_parent.assignStudentToParent', ['student_id' => $value->id, 'parent_id' => $data['parent_id']]) }}"

@@ -23,7 +23,7 @@
 
                         <div class="card card-primary">
 
-                            <form method="post" action="{{ route('subject.store') }}">
+                            <form method="post" action="{{ route('subject.store') }}" novalidate>
                                 @csrf
                                 <div class="card-body">
                                     <div class="form-group">

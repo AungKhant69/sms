@@ -3,20 +3,25 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\User;
+use App\Helper\FormHelper;
 use App\Models\SubjectModel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreSubjectRequest;
 use App\Http\Requests\UpdateSubjectRequest;
+use App\Models\ClassSubjectModel;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SubjectController extends Controller
 {
-    public $pagination = 5;
+    public $pagination = '';
     public $data = [];
     public function __construct()
     {
+        $config = FormHelper::getConfig();
+        $this->pagination = $config['paginate'];
         $this->data = [
             'header_title' => 'Subject List',
             'getRecord' => [],
@@ -77,7 +82,7 @@ class SubjectController extends Controller
             return redirect('/admin/subject/list')->with('success', 'Subject is Updated Successfully');
         } catch (ModelNotFoundException $exception) {
             return redirect('/admin/subject/list')->with('error', $exception->getMessage());
-        }catch(Exception $e) {
+        } catch (Exception $e) {
             return redirect('/admin/subject/list')->with('error', $e->getMessage());
         }
     }
@@ -90,9 +95,9 @@ class SubjectController extends Controller
             $subject->delete();
 
             return redirect('/admin/subject/list')->with('success', 'Subject is soft Deleted Successfully');
-        }catch (ModelNotFoundException $exception) {
+        } catch (ModelNotFoundException $exception) {
             return redirect('/admin/subject/list')->with('error', $exception->getMessage());
-        }catch(Exception $e) {
+        } catch (Exception $e) {
             return redirect('/admin/subject/list')->with('error', $e->getMessage());
         }
     }
@@ -103,9 +108,9 @@ class SubjectController extends Controller
             $softDeletedRecords = SubjectModel::onlyTrashed()->whereNotNull('subject.deleted_at')->get();
 
             return view('admin.subject.deleted_list', compact('softDeletedRecords'));
-        }catch (ModelNotFoundException $exception) {
+        } catch (ModelNotFoundException $exception) {
             return redirect('/admin/subject/list')->with('error', $exception->getMessage());
-        }catch(Exception $e) {
+        } catch (Exception $e) {
             return redirect('/admin/subject/list')->with('error', $e->getMessage());
         }
     }
@@ -118,7 +123,7 @@ class SubjectController extends Controller
             return redirect('/admin/subject/list')->with('success', 'Subject data is restored successfully');
         } catch (ModelNotFoundException $exception) {
             return redirect('/admin/subject/list')->with('error', $exception->getMessage());
-        }catch(Exception $e) {
+        } catch (Exception $e) {
             return redirect('/admin/subject/list')->with('error', $e->getMessage());
         }
     }
@@ -131,14 +136,14 @@ class SubjectController extends Controller
             return redirect('/admin/subject/list')->with('success', 'Subject data is permanently deleted');
         } catch (ModelNotFoundException $exception) {
             return redirect('/admin/subject/list')->with('error', $exception->getMessage());
-        }catch(Exception $e) {
+        } catch (Exception $e) {
             return redirect('/admin/subject/list')->with('error', $e->getMessage());
         }
     }
 
     private function getRecord(Request $request) //search bar for records
     {
-        $record = SubjectModel::with('createdBy', 'updatedBy')->whereNull('subject.deleted_at');
+        $record = SubjectModel::with('createdBy', 'updatedBy');
 
         if (!empty($request->get('name'))) {
             $record = $record->where('subject.name', 'like', '%' . $request->get('name') . '%');
@@ -160,5 +165,39 @@ class SubjectController extends Controller
         ]);
 
         return $paginator;
+    }
+
+    //************ Student side **********
+
+    public function studentSubject()
+    {
+        $this->data['getSubject'] = $this->mySubject(Auth::user()->class_id);
+        $this->data['header_title'] = 'Subject List';
+        // dd($this->data['getSubject']);
+        return view('student.my_subject')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    //************ Parent side **********
+
+    public function ParentStudentSubject($student_id)
+    {
+        $user = User::findOrFail($student_id);
+        $this->data['getUser'] = $user;
+        $this->data['getRecord'] = $this->mySubject($user->class_id);
+        $this->data['header_title'] = 'Student Subject';
+        return view('parent.my_student_subject')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    private function mySubject($class_id)
+    {
+        return ClassSubjectModel::with(['classData', 'subjectData'])
+            ->where('class_id', $class_id)
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
     }
 }

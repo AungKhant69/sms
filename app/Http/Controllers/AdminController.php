@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\User;
+use App\Helper\FormHelper;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -15,10 +16,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AdminController extends Controller
 {
-    public $pagination = 20;
+    public $pagination = '';
     public $data = [];
     public function __construct()
     {
+        $config = FormHelper::getConfig();
+        $this->pagination = $config['paginate'];
         $this->data = [
             'header_title' => 'Admin List',
             'getRecord' => [],

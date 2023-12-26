@@ -2,6 +2,8 @@
 
 namespace App\Helper;
 
+use App\Models\ConfigModel;
+
 class FormHelper
 {
     public static function getProfile($url)
@@ -11,6 +13,11 @@ class FormHelper
         }else{
             return "";
         }
+    }
+
+    public static function getConfig(){
+        return ConfigModel::latest()->first()->toArray();
+
     }
 
 }

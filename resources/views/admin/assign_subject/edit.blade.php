@@ -24,7 +24,7 @@
                         <div class="card card-primary">
 
                             <form method="post"
-                                action="{{ route('assign_subject.edit', ['id' => $data['getRecord']->id]) }}">
+                                action="{{ route('assign_subject.update', ['id' => $data['getRecord']->id]) }}">
                                 @csrf
                                 @method('PUT')
                                 <div class="card-body">

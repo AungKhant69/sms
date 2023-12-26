@@ -111,16 +111,18 @@
                                         @enderror
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="confirmpassword">Confirm Password</label>
+                                        <input type="password" class="form-control" name="password_confirmation"
+                                            placeholder="Confirm Password">
+                                        @error('password_confirmation')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="confirmpassword">Confirm Password</label>
-                                    <input type="password" class="form-control" name="password_confirmation"
-                                        placeholder="Confirm Password">
-                                    @error('password_confirmation')
-                                        <p class="text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
+
 
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Submit</button>

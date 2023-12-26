@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Helper\FormHelper;
 use App\Models\ClassModel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,10 +12,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ClassController extends Controller
 {
-    public $pagination = 5;
+    public $pagination = '';
     public $data = [];
     public function __construct()
     {
+        $config = FormHelper::getConfig();
+        $this->pagination = $config['paginate'];
         $this->data = [
             'header_title' => 'Class List',
             'getRecord' => [],

@@ -8,6 +8,7 @@ use App\Helper\FormHelper;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreParentRequest;
@@ -17,10 +18,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ParentController extends Controller
 {
-    public $pagination = 5;
+    public $pagination = '';
     public $data = [];
     public function __construct()
     {
+        $config = FormHelper::getConfig();
+        $this->pagination = $config['paginate'];
         $this->data = [
             'header_title' => 'Parents List',
             'getRecord' => [],
@@ -272,5 +275,17 @@ class ParentController extends Controller
         $student->update(['parent_id' => null]);
 
         return redirect()->back()->with('success', 'Student Successfully Removed from Parent');
+    }
+
+    //************ Parent side **********
+    public function myStudentParent()
+    {
+        $id = Auth::user()->id;
+        $this->data['getRecord'] = $this->getMyStudent($id);
+        $this->data['header_title'] = 'My Student List';
+
+        return view('parent.my_student')->with([
+            'data' => $this->data,
+        ]);
     }
 }

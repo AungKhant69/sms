@@ -15,8 +15,20 @@ class ClassModel extends Model
 
     public function subjects()
     {
-        return $this->hasMany(SubjectModel::class, 'class_id');
+        return $this->hasManyThrough(
+            SubjectModel::class,
+            ClassSubjectModel::class,
+            'class_id',
+            'id',
+            'id',
+            'subject_id'
+        );
     }
+
+    // public function students()
+    // {
+    //     return $this->hasMany(User::class, 'class_id');
+    // }
 
     public function createdBy()
     {
@@ -27,5 +39,15 @@ class ClassModel extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
-}
 
+    // public function subjectData()
+    // {
+    //     return $this->belongsTo(SubjectModel::class, 'subject_id');
+    // }
+
+    // public function teacherClasses()
+    // {
+    //     return $this->belongsToMany(User::class, 'assign_class_teacher', 'class_id', 'teacher_id')
+    //         ->wherePivot('status', 1);
+    // }
+}
