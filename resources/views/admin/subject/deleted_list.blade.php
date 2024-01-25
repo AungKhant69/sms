@@ -35,7 +35,7 @@
                                             <td>{{ $record->name }}</td>
                                             <td>{{ $record->type }}</td>
                                             <td>{{ $record->status }}</td>
-                                            <td>{{ $record->deleted_at->format('m-d-Y H:i A') }}</td>
+                                            <td>{{ $record->deleted_at->format(auth()->user()->date_format) }}</td>
                                             <td>
                                                 <form action="{{ route('subject.restore', ['id' => $record->id]) }}" method="post"
                                                     style="display:inline;">

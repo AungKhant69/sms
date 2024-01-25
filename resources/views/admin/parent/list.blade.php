@@ -122,6 +122,10 @@
                                                     </form>
                                                     <a href="{{ route('admin_parent.myStudent', ['id' => $value->id]) }}"
                                                         class="btn btn-primary">Relationships</a>
+
+                                                    <a href="{{ route('chat.index', ['receiver_id' => base64_encode($value->id)]) }}"
+                                                        class="btn btn-success">Send Message</a>
+
                                                 </td>
                                             </tr>
                                         @empty

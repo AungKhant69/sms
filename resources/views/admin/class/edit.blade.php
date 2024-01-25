@@ -23,7 +23,7 @@
 
                         <div class="card card-primary">
 
-                            <form method="post" action="{{ route('class.update', $data['getRecord']->id) }}">
+                            <form method="post" action="{{ route('class.update', $data['getRecord']->id) }}" novalidate>
                                 @csrf
                                 @method('PUT')
                                 <div class="card-body">
@@ -32,6 +32,15 @@
                                         <input type="text" class="form-control" name="name"
                                             value="{{ old('name', $data['getRecord']->name) }}" required
                                             placeholder="Enter Class Name">
+                                        @error('name')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Fees Amount ($)</label>
+                                        <input type="number" class="form-control" value="{{ old('fees_amount', $data['getRecord']->fees_amount) }}" name="fees_amount" required
+                                            placeholder="Enter Fees Amount">
                                         @error('name')
                                             <p class="text-danger">{{ $message }}</p>
                                         @enderror

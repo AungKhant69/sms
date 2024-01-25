@@ -39,24 +39,26 @@
                                         <div class="form-group col-md-3">
                                             <label>Name</label>
                                             <input type="text" class="form-control" value="{{ Request::get('name') }}"
-                                                name="name"  placeholder="Enter Name">
+                                                name="name" placeholder="Enter Name">
                                         </div>
 
                                         <div class="form-group col-md-3">
                                             <label>Email</label>
                                             <input type="text" class="form-control" name="email"
-                                                value="{{ Request::get('email') }}"  placeholder="Enter Email">
+                                                value="{{ Request::get('email') }}" placeholder="Enter Email">
                                         </div>
 
                                         <div class="form-group col-md-3">
                                             <label>Date</label>
                                             <input type="date" class="form-control" name="date"
-                                                value="{{ Request::get('date') }}"  placeholder="Enter Email">
+                                                value="{{ Request::get('date') }}" placeholder="Enter Email">
                                         </div>
 
                                         <div class="form-group col-md-3">
-                                           <button class="btn btn-primary" type="submit" style="margin-top: 11%">Search</button>
-                                           <a href="{{ route('admin_teacher.index') }}" class="btn btn-success" style="margin-top: 11%">Clear</a>
+                                            <button class="btn btn-primary" type="submit"
+                                                style="margin-top: 11%">Search</button>
+                                            <a href="{{ route('admin_teacher.index') }}" class="btn btn-success"
+                                                style="margin-top: 11%">Clear</a>
                                         </div>
                                     </div>
                                 </div>
@@ -91,8 +93,8 @@
                                                 <td>{{ $value->id }}</td>
                                                 <td>
                                                     {{-- HTML parsing  --}}
-                                                    @if(!empty($value->profile_pic))
-                                                    {!! FormHelper::getProfile($value->profile_pic) !!}
+                                                    @if (!empty($value->profile_pic))
+                                                        {!! FormHelper::getProfile($value->profile_pic) !!}
                                                     @endif
                                                 </td>
                                                 <td>{{ $value->name }}</td>
@@ -103,14 +105,19 @@
                                                 <td>
                                                     <a href="{{ route('admin_teacher.edit', ['id' => $value->id]) }}"
                                                         class="btn btn-primary">Edit</a>
-                                                        <form action="{{ route('admin_teacher.destroy', ['id' => $value->id]) }}" method="post" style="display:inline;">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete?')">Delete</button>
-                                                        </form>
+                                                    <form
+                                                        action="{{ route('admin_teacher.destroy', ['id' => $value->id]) }}"
+                                                        method="post" style="display:inline;">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="btn btn-danger"
+                                                            onclick="return confirm('Are you sure you want to delete?')">Delete</button>
+                                                    </form>
+                                                    <a href="{{ route('chat.index', ['receiver_id' => base64_encode($value->id)]) }}"
+                                                        class="btn btn-success">Send Message</a>
                                                 </td>
                                             </tr>
-                                            @empty
+                                        @empty
                                             <tr>
                                                 <td colspan="8" class="text-center">No Matching Search Results</td>
                                             </tr>

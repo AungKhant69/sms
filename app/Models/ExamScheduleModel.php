@@ -39,5 +39,10 @@ class ExamScheduleModel extends Model
         return $this->belongsTo(ExamModel::class, 'exam_id');
     }
 
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
+    }
+
 
 }

@@ -10,9 +10,11 @@ use App\Models\ClassModel;
 use Illuminate\Http\Request;
 use App\Models\ClassSubjectModel;
 use App\Models\ExamScheduleModel;
+use App\Models\MarksRegisterModel;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreExamRequest;
+use App\Models\AssignClassTeacherModel;
 use App\Http\Requests\UpdateExamRequest;
 use App\Http\Requests\ExamScheduleStoreRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -266,21 +268,9 @@ class ExamController extends Controller
                                 'full_marks' => $schedule['full_marks'],
                                 'passing_marks' => $schedule['passing_marks'],
                                 'created_by' => Auth::user()->id,
+                                'updated_by' => Auth::user()->id,
                             ]
                         );
-                        //     // $examSchedule = ExamScheduleModel::create([
-                        //     //     'exam_id' => $request->exam_id,
-                        //     //     'class_id' => $request->class_id,
-                        //     //     'subject_id' => $schedule['subject_id'],
-                        //     //     'exam_date' => $schedule['exam_date'],
-                        //     //     'start_time' => $schedule['start_time'],
-                        //     //     'end_time' => $schedule['end_time'],
-                        //     //     'room_number' => $schedule['room_number'],
-                        //     //     'full_marks' => $schedule['full_marks'],
-                        //     //     'passing_marks' => $schedule['passing_marks'],
-                        //     //     'created_by' => auth()->user()->id,
-                        // ]);
-
                     }
                 }
                 return redirect()->back()->with('success', 'Exam Schedule successfully stored.');
@@ -344,6 +334,23 @@ class ExamController extends Controller
             $this->data['getExamSubject'] = $this->getExamSubject($request->get('exam_id'), $request->get('class_id'));
             $this->data['getStudentExamClass'] = $this->getStudentExamClass($request->get('class_id'));
 
+            // Fetch existing marks from the database
+            $existingMarks = MarksRegisterModel::whereIn('student_id', $this->data['getStudentExamClass']->pluck('id'))
+                ->where('exam_id', $request->get('exam_id'))
+                ->where('class_id', $request->get('class_id'))
+                ->whereIn('subject_id', $this->data['getExamSubject']->pluck('subjectData.id'))
+                ->get();
+
+            // Organize existing marks into a convenient array for the view
+            $existingMarksArray = [];
+            foreach ($existingMarks as $mark) {
+                $existingMarksArray[$mark->student_id][$mark->subject_id] = [
+                    'exam_marks' => $mark->exam_marks,
+                    'homework_marks' => $mark->homework_marks,
+                ];
+            }
+
+            $this->data['existingMarks'] = $existingMarksArray;
         }
 
         $this->data['header_title'] = 'Marks Register';
@@ -351,6 +358,41 @@ class ExamController extends Controller
             'data' => $this->data,
         ]);
     }
+
+    public function marks_register_teacher(Request $request)
+    {
+        $this->data['getClass'] = $this->getClass();
+        $this->data['getExamList'] = $this->getExamList();
+
+        if (!empty($request->get('exam_id')) && !empty($request->get('class_id'))) {
+            $this->data['getExamSubject'] = $this->getExamSubject($request->get('exam_id'), $request->get('class_id'));
+            $this->data['getStudentExamClass'] = $this->getStudentExamClass($request->get('class_id'));
+
+            // Fetch existing marks from the database
+            $existingMarks = MarksRegisterModel::whereIn('student_id', $this->data['getStudentExamClass']->pluck('id'))
+                ->where('exam_id', $request->get('exam_id'))
+                ->where('class_id', $request->get('class_id'))
+                ->whereIn('subject_id', $this->data['getExamSubject']->pluck('subjectData.id'))
+                ->get();
+
+            // Organize existing marks into a convenient array for the view
+            $existingMarksArray = [];
+            foreach ($existingMarks as $mark) {
+                $existingMarksArray[$mark->student_id][$mark->subject_id] = [
+                    'exam_marks' => $mark->exam_marks,
+                    'homework_marks' => $mark->homework_marks,
+                ];
+            }
+
+            $this->data['existingMarks'] = $existingMarksArray;
+        }
+
+        $this->data['header_title'] = 'Marks Register';
+        return view('teacher.marks_register')->with([
+            'data' => $this->data,
+        ]);
+    }
+
 
     private function getExamSubject($exam_id, $class_id)
     {
@@ -363,8 +405,156 @@ class ExamController extends Controller
     private function getStudentExamClass($class_id)
     {
         return User::where('users.user_type', '=', 3)
-            ->with('parent', 'classData')
+            ->with('parent', 'classData', 'subjectData')
             ->where('users.class_id', '=', $class_id)
             ->orderBy('users.id', 'desc')->get();
+    }
+
+    public function store_marks_register(Request $request)
+    {
+        try {
+            if (!empty($request->marks)) {
+                foreach ($request->marks as $mark) {
+                    $exam_marks = !empty($mark['exam_marks']) ? $mark['exam_marks'] : 0;
+                    $homework_marks = !empty($mark['homework_marks']) ? $mark['homework_marks'] : 0;
+
+                    $existingMark = $this->NoDuplicateMark($request->student_id, $request->exam_id, $request->class_id, $mark['subject_id']);
+
+                    if (!empty($existingMark)) {
+                        // Update existing record
+                        $existingMark->update([
+                            'exam_marks' => $exam_marks,
+                            'homework_marks' => $homework_marks,
+                            'updated_by' => Auth::user()->id,
+                        ]);
+                    } else {
+                        // Create new record
+                        MarksRegisterModel::create([
+                            'student_id' => $request->student_id,
+                            'exam_id' => $request->exam_id,
+                            'class_id' => $request->class_id,
+                            'subject_id' => $mark['subject_id'],
+                            'exam_marks' => $exam_marks,
+                            'homework_marks' => $homework_marks,
+                            'created_by' => Auth::user()->id,
+                        ]);
+                    }
+                }
+            }
+            return redirect()->back()->with('success', 'Marks successfully stored.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+        // dd($request->all());
+    }
+
+    public function store_marks_register_teacher(Request $request)
+    {
+        try {
+            if (!empty($request->marks)) {
+                foreach ($request->marks as $mark) {
+                    $exam_marks = !empty($mark['exam_marks']) ? $mark['exam_marks'] : 0;
+                    $homework_marks = !empty($mark['homework_marks']) ? $mark['homework_marks'] : 0;
+
+                    $existingMark = $this->NoDuplicateMark($request->student_id, $request->exam_id, $request->class_id, $mark['subject_id']);
+
+                    if (!empty($existingMark)) {
+                        // Update existing record
+                        $existingMark->update([
+                            'exam_marks' => $exam_marks,
+                            'homework_marks' => $homework_marks,
+                            'updated_by' => Auth::user()->id,
+                        ]);
+                    } else {
+                        // Create new record
+                        MarksRegisterModel::create([
+                            'student_id' => $request->student_id,
+                            'exam_id' => $request->exam_id,
+                            'class_id' => $request->class_id,
+                            'subject_id' => $mark['subject_id'],
+                            'exam_marks' => $exam_marks,
+                            'homework_marks' => $homework_marks,
+                            'created_by' => Auth::user()->id,
+                        ]);
+                    }
+                }
+            }
+            return redirect()->back()->with('success', 'Marks successfully stored.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+        // dd($request->all());
+    }
+
+    private function NoDuplicateMark($student_id, $exam_id, $class_id, $subject_id)
+    {
+        return MarksRegisterModel::with('student', 'exam', 'classData', 'subjectData')
+            ->where('student_id', $student_id)
+            ->where('exam_id', $exam_id)
+            ->where('class_id', $class_id)
+            ->where('subject_id', $subject_id)->first();
+    }
+
+    // ********* Student side *********
+    public function student_exam_timetable()
+    {
+        $class_id = Auth::user()->class_id;
+        $exams = ExamScheduleModel::where('class_id', $class_id)
+            ->with(['exam', 'classData', 'subjectData'])
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $this->data['getRecord'] = $exams;
+        // dd($data['getRecord']);
+
+        $this->data['header_title'] = 'My Exam Timetable';
+        return view('student.my_exam_timetable')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    //*********** Teacher side ***********
+    public function teacher_exam_timetable()
+    {
+        $getClass = $this->getMyClassSubject(Auth::user()->id);
+        $classIds = $getClass->pluck('class_id')->toArray();
+
+        $exam = ExamScheduleModel::whereIn('class_id', $classIds)
+            ->with(['exam', 'classData', 'subjectData'])
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $this->data['getTimetable'] = $exam;
+
+        $this->data['header_title'] = 'My Exam Timetable';
+        return view('teacher.my_exam_timetable')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    private function getMyClassSubject($teacher_id)
+    {
+        return AssignClassTeacherModel::where('assign_class_teacher.status', '=', 1)
+            ->where('assign_class_teacher.teacher_id', '=', $teacher_id)
+            ->with('classData', 'subjectData')->get();
+    }
+
+    //********** Parent Side ***********
+    public function parent_exam_timetable($student_id)
+    {
+        $getStudent = User::findOrFail($student_id);
+        $class_id = $getStudent->class_id;
+        $exams = ExamScheduleModel::where('class_id', $class_id)
+            ->with(['exam', 'classData', 'subjectData'])
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $this->data['getMyStudentTimeTable'] = $exams;
+        $this->data['getStudent'] = $getStudent;
+
+        $this->data['header_title'] = 'My Student Exam Timetable';
+        return view('parent.my_exam_timetable')->with([
+            'data' => $this->data,
+        ]);
     }
 }

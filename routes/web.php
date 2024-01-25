@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
@@ -11,8 +12,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\HomeworkController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ClassSubjectController;
+use App\Http\Controllers\FeesCollectionController;
 use App\Http\Controllers\AssignClassTeacherController;
 
 /*
@@ -41,6 +45,8 @@ Route::post('reset/{token}', [AuthController::class, 'postReset']);
 
 Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard']);
+    Route::get('setting', [UserController::class, 'businessEmail'])->name('admin.setting');
+    Route::post('setting', [UserController::class, 'updateBusinessEmail'])->name('admin.setting');
 
     Route::get('admin/list', [AdminController::class, 'index'])->name('admin.index');
     Route::get('admin/add', [AdminController::class, 'create'])->name('admin.create');
@@ -161,39 +167,110 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::post('examinations/exam_schedule_store', [ExamController::class, 'exam_schedule_store'])->name('exam_schedule.store');
 
     Route::get('examinations/marks_register', [ExamController::class, 'marks_register'])->name('exam_marks.index');
+    Route::post('examinations/submit_marks_register', [ExamController::class, 'store_marks_register'])->name('exam_marks.store');
+
+    //  Attendance/Homework routes
+    Route::get('student_management/attendance', [AttendanceController::class, 'StudentAttendance'])->name('attendance.index');
+    Route::post('student_management/submit_attendance', [AttendanceController::class, 'store_attendance'])->name('attendance.store');
+    Route::get('student_management/attendance_report', [AttendanceController::class, 'AttendanceReport'])->name('attendance_report.index');
+
+    Route::get('student_management/homework', [HomeworkController::class, 'index'])->name('homework.index');
+    Route::get('student_management/homework/add', [HomeworkController::class, 'create'])->name('homework.create');
+    Route::post('student_management/homework/add', [HomeworkController::class, 'store'])->name('homework.store');
+    Route::get('student_management/homework/edit/{id}', [HomeworkController::class, 'edit'])->name('homework.edit');
+    Route::put('student_management/homework/edit/{id}', [HomeworkController::class, 'update'])->name('homework.update');
+    Route::delete('student_management/homework/delete/{id}', [HomeworkController::class, 'destroy'])->name('homework.destroy');
+
+    Route::get('student_management/homework/deleted_list', [HomeworkController::class, 'deletedList'])->name('homework.deletedList');
+    Route::post('student_management/restore/{id}', [HomeworkController::class, 'Restore'])->name('homework.restore');
+    Route::delete('student_management/force-delete/{id}', [HomeworkController::class, 'ForceDelete'])->name('homework.forceDelete');
+
+    // Fees Collection Routes
+    Route::get('fees_collection/collect_fees', [FeesCollectionController::class, 'collect_fees'])->name('fees_collection.index');
+    Route::get('fees_collection/add_fees/{student_id}', [FeesCollectionController::class, 'add_fees'])->name('fees_collection.create');
+    Route::post('fees_collection/add_fees/{student_id}', [FeesCollectionController::class, 'store_fees'])->name('fees_collection.store');
+
+    Route::get('stripe/payment-error', [FeesCollectionController::class, 'payment_error'])->name('stripe.payment_error');
+    Route::get('stripe/payment-success', [FeesCollectionController::class, 'payment_success'])->name('stripe.payment_success');
 
 });
 
 // ******   Teacher routes   ******//
 Route::group(['middleware' => 'teacher', 'prefix' => 'teacher'], function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('teacher.dashboard');
+    Route::get('admin/list', [AdminController::class, 'index_teacher_side'])->name('admin_teacher_side.index');
+    Route::get('parent/list', [ParentController::class, 'index_teacher_side'])->name('parent_teacher_side.index');
 
     Route::get('my_class_subject', [AssignClassTeacherController::class, 'myClassSubject'])->name('teacher.my_class_subject');
     Route::get('my_student', [StudentController::class, 'myStudent'])->name('teacher.myStudent');
+    Route::get('my_exam_timetable', [ExamController::class, 'teacher_exam_timetable'])->name('teacher.my_exam_timetable');
 
-    Route::get('/profile', [ProfileController::class, 'showSettings'])->name('admin_settings.index');
-    Route::patch('/profile', [ProfileController::class, 'updateSettings'])->name('admin_settings.update');
+    Route::get('/profile', [TeacherController::class, 'showSettings'])->name('teacher_settings.index');
+    Route::patch('/profile', [TeacherController::class, 'updateSettings'])->name('teacher_settings.update');
+
+    Route::get('marks_register', [ExamController::class, 'marks_register_teacher'])->name('exam_marks_teacher.index');
+    Route::post('submit_marks_register', [ExamController::class, 'store_marks_register_teacher'])->name('exam_marks_teacher.store');
+
+    Route::get('student_management/attendance', [AttendanceController::class, 'StudentAttendance_teacher'])->name('attendance_teacher.index');
+    Route::post('student_management/submit_attendance', [AttendanceController::class, 'store_attendance_teacher'])->name('attendance_teacher.store');
+    Route::get('student_management/attendance_report', [AttendanceController::class, 'AttendanceReport_teacher'])->name('attendance_report_teacher.index');
+
+    Route::get('student_management/homework', [HomeworkController::class, 'index_teacher_side'])->name('homework_teacher.index');
+    Route::get('student_management/homework/add', [HomeworkController::class, 'create_teacher_side'])->name('homework_teacher.create');
+    Route::post('student_management/homework/add', [HomeworkController::class, 'store_teacher_side'])->name('homework_teacher.store');
+    Route::get('student_management/homework/edit/{id}', [HomeworkController::class, 'edit_teacher_side'])->name('homework_teacher.edit');
+    Route::put('student_management/homework/edit/{id}', [HomeworkController::class, 'update_teacher_side'])->name('homework_teacher.update');
+    Route::delete('student_management/homework/delete/{id}', [HomeworkController::class, 'destroy_teacher_side'])->name('homework_teacher.destroy');
+
+    Route::get('student_management/homework/deleted_list', [HomeworkController::class, 'deletedList_teacher_side'])->name('homework_teacher.deletedList');
+    Route::post('student_management/restore/{id}', [HomeworkController::class, 'Restore_teacher_side'])->name('homework_teacher.restore');
+    Route::delete('student_management/force-delete/{id}', [HomeworkController::class, 'ForceDelete_teacher_side'])->name('homework_teacher.forceDelete');
 
 });
 
 // ******   Student routes   ******//
 Route::group(['middleware' => 'student', 'prefix' => 'student'], function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('student.dashboard');
+    Route::get('admin/list', [AdminController::class, 'index_student_side'])->name('admin_student_side.index');
+    Route::get('teacher/list', [TeacherController::class, 'index_student_side'])->name('teacher_student_side.index');
 
     Route::get('my_subject', [SubjectController::class, 'studentSubject'])->name('student.mySubject');
 
-    Route::get('/profile', [ProfileController::class, 'showSettings'])->name('admin_settings.index');
-    Route::patch('/profile', [ProfileController::class, 'updateSettings'])->name('admin_settings.update');
+    Route::get('my_exam_timetable', [ExamController::class, 'student_exam_timetable'])->name('student.my_exam_timetable');
+
+    Route::get('my_academic_info/attendance_report', [AttendanceController::class, 'AttendanceReport_student'])->name('attendance_report_student.index');
+    Route::get('my_academic_info/my_homework', [HomeworkController::class, 'index_student_side'])->name('homework_student.index');
+
+    Route::get('/profile', [StudentController::class, 'showSettings'])->name('student_settings.index');
+    Route::patch('/profile', [StudentController::class, 'updateSettings'])->name('student_settings.update');
 
 });
 
 // ******   Parent routes   ******//
 Route::group(['middleware' => 'parent', 'prefix' => 'parent'], function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('parent.dashboard');
+    Route::get('admin/list', [AdminController::class, 'index_parent_side'])->name('admin_parent_side.index');
+    Route::get('teacher/list', [TeacherController::class, 'index_parent_side'])->name('teacher_parent_side.index');
 
     Route::get('my_student', [ParentController::class, 'myStudentParent'])->name('parent.my_student');
     Route::get('my_student/subject/{student_id}', [SubjectController::class, 'ParentStudentSubject'])->name('parent.ParentStudentSubject');
+    Route::get('my_student/exam_timetable/{student_id}', [ExamController::class, 'parent_exam_timetable'])->name('parent.exam_timetable');
+    Route::get('my_student/homework/{student_id}', [HomeworkController::class, 'homework_parent_side'])->name('parent.checkHomework');
 
-    Route::get('/profile', [ProfileController::class, 'showSettings'])->name('admin_settings.index');
-    Route::patch('/profile', [ProfileController::class, 'updateSettings'])->name('admin_settings.update');
+    Route::get('fees_collection/add_fees/{student_id}', [FeesCollectionController::class, 'add_fees_parent_side'])->name('fees_collection_parent.create');
+    Route::post('fees_collection/add_fees/{student_id}', [FeesCollectionController::class, 'store_fees_parent_side'])->name('fees_collection_parent.store');
+    Route::get('stripe/payment-error', [FeesCollectionController::class, 'payment_error'])->name('stripe.payment_error_parent_side');
+    Route::get('stripe/payment-success', [FeesCollectionController::class, 'payment_success'])->name('stripe.payment_success_parent_side');
+
+    Route::get('/profile', [ParentController::class, 'showSettings'])->name('parent_settings.index');
+    Route::patch('/profile', [ParentController::class, 'updateSettings'])->name('parent_settings.update');
+});
+
+// ******   Common routes   ******//
+Route::group(['middleware' => 'common'], function () {
+    Route::get('chat', [ChatController::class, 'chat'])->name('chat.index');
+    Route::post('submit_message', [ChatController::class, 'submit_message'])->name('chat.submit_message');
+    Route::post('getChatBox', [ChatController::class, 'getChatBox'])->name('chat.getChatBox');
+    Route::post('getSearchedUser', [ChatController::class, 'getSearchedUser'])->name('chat.getSearchedUser');
+
 });

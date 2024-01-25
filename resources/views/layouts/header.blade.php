@@ -10,92 +10,21 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-        <!-- Navbar Search -->
-        {{-- <li class="nav-item">
-            <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                <i class="fas fa-search"></i>
-            </a>
-            <div class="navbar-search-block">
-                <form class="form-inline">
-                    <div class="input-group input-group-sm">
-                        <input class="form-control form-control-navbar" type="search" placeholder="Search"
-                            aria-label="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-navbar" type="submit">
-                                <i class="fas fa-search"></i>
-                            </button>
-                            <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </li> --}}
+        @php
+            $getAllChatUserCount = App\Models\ChatModel::getAllChatUserCount();
+        @endphp
 
         <!-- Messages Dropdown Menu -->
-        <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('chat.index') }}">
                 <i class="far fa-comments"></i>
-                <span class="badge badge-danger navbar-badge">3</span>
+                <span
+                    class="badge badge-danger navbar-badge">{{ !empty($getAllChatUserCount) ? $getAllChatUserCount : '' }}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <a href="#" class="dropdown-item">
-                    <!-- Message Start -->
-                    <div class="media">
-                        <img src="{{ url('dist/img/user1-128x128.jpg') }}" alt="User Avatar"
-                            class="img-size-50 mr-3 img-circle">
-                        <div class="media-body">
-                            <h3 class="dropdown-item-title">
-                                Brad Diesel
-                                <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                            </h3>
-                            <p class="text-sm">Call me whenever you can...</p>
-                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                        </div>
-                    </div>
-                    <!-- Message End -->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <!-- Message Start -->
-                    <div class="media">
-                        <img src="{{ url('dist/img/user8-128x128.jpg') }}" alt="User Avatar"
-                            class="img-size-50 img-circle mr-3">
-                        <div class="media-body">
-                            <h3 class="dropdown-item-title">
-                                John Pierce
-                                <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                            </h3>
-                            <p class="text-sm">I got your message bro</p>
-                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                        </div>
-                    </div>
-                    <!-- Message End -->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <!-- Message Start -->
-                    <div class="media">
-                        <img src="{{ url('dist/img/user3-128x128.jpg') }}" alt="User Avatar"
-                            class="img-size-50 img-circle mr-3">
-                        <div class="media-body">
-                            <h3 class="dropdown-item-title">
-                                Nora Silvester
-                                <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                            </h3>
-                            <p class="text-sm">The subject goes here</p>
-                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                        </div>
-                    </div>
-                    <!-- Message End -->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-            </div>
+
         </li>
         <!-- Notifications Dropdown Menu -->
-        <li class="nav-item dropdown">
+        {{-- <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="far fa-bell"></i>
                 <span class="badge badge-warning navbar-badge">15</span>
@@ -120,7 +49,9 @@
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
             </div>
-        </li>
+        </li> --}}
+
+
         {{-- <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                 <i class="fas fa-expand-arrows-alt"></i>
@@ -242,7 +173,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('class.index') }}"
                                     class="nav-link @if (Request::segment(2) == 'class') active @endif">
-                                    <i class="nav-icon far fa-user"></i>
+                                    <i class="nav-icon fas fa-chalkboard"></i>
                                     <p>
                                         Class
                                     </p>
@@ -252,7 +183,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('subject.index') }}"
                                     class="nav-link @if (Request::segment(2) == 'subject') active @endif">
-                                    <i class="nav-icon far fa-user"></i>
+                                    <i class="nav-icon fas fa-pencil-alt"></i>
                                     <p>
                                         Subject
                                     </p>
@@ -262,7 +193,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('assign_subject.index') }}"
                                     class="nav-link @if (Request::segment(2) == 'assign_subject') active @endif">
-                                    <i class="nav-icon far fa-user"></i>
+                                    <i class="nav-icon fas fa-chart-bar"></i>
                                     <p>
                                         Assign Subject
                                     </p>
@@ -272,7 +203,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('assign_class_teacher.index') }}"
                                     class="nav-link @if (Request::segment(2) == 'assign_class_teacher') active @endif">
-                                    <i class="nav-icon far fa-user"></i>
+                                    <i class="nav-icon fas fa-chart-bar"></i>
                                     <p>
                                         Assign Class Teacher
                                     </p>
@@ -325,6 +256,76 @@
                             </li>
                         </ul>
 
+                    <li class="nav-item has-treeview @if (Request::segment(2) == 'student_management' ||
+                            Request::segment(2) == 'student_management' ||
+                            Request::segment(2) == 'student_management' ||
+                            Request::segment(2) == 'student_management') menu-open @endif">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-briefcase"></i>
+                            <p>
+                                Student Management
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('attendance.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'attendance') active @endif">
+                                    <i class="nav-icon far fas fa-check-circle"></i>
+                                    <p>
+                                        Attendance
+                                    </p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('attendance_report.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'attendance_report') active @endif">
+                                    <i class="nav-icon far fas fa-file-alt"></i>
+                                    <p>
+                                        Attendance Report
+                                    </p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('homework.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'homework') active @endif">
+                                    <i class="nav-icon far fas fa-tasks"></i>
+                                    <p>
+                                        Homework
+                                    </p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview @if (Request::segment(2) == 'fees_collection' ||
+                            Request::segment(2) == 'fees_collection' ||
+                            Request::segment(2) == 'fees_collection' ||
+                            Request::segment(2) == 'fees_collection') menu-open @endif">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon far fa-money-bill-alt"></i>
+                            <p>
+                                Fees Collection
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('fees_collection.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'collect_fees') active @endif">
+                                    <i class="nav-icon far fa-credit-card"></i>
+                                    <p>
+                                        Collect Fees
+                                    </p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
                         <a href="{{ route('admin_settings.index') }}"
                             class="nav-link @if (Request::segment(2) == 'profile') active @endif">
@@ -334,6 +335,16 @@
                             </p>
                         </a>
                     </li>
+
+                    {{-- <li class="nav-item">
+                        <a href="{{ route('admin.setting') }}"
+                            class="nav-link @if (Request::segment(2) == 'setting') active @endif">
+                            <i class="nav-icon far fas fa-envelope"></i>
+                            <p>
+                                Business Email Setting
+                            </p>
+                        </a>
+                    </li> --}}
 
                     {{-- Teacher side --}}
                 @elseif(Auth::user()->user_type == 2)
@@ -357,7 +368,7 @@
                         </a>
                     </li>
 
-                    {{-- <li class="nav-item">
+                    <li class="nav-item">
                         <a href="{{ route('teacher.myStudent') }}"
                             class="nav-link @if (Request::segment(2) == 'my_student') active @endif">
                             <i class="nav-icon fas fa-chalkboard"></i>
@@ -365,10 +376,94 @@
                                 My Students
                             </p>
                         </a>
-                    </li> --}}
+                    </li>
 
                     <li class="nav-item">
-                        <a href="{{ route('admin_settings.index') }}"
+                        <a href="{{ route('teacher.my_exam_timetable') }}"
+                            class="nav-link @if (Request::segment(2) == 'my_exam_timetable') active @endif">
+                            <i class="nav-icon far fa-calendar-alt"></i>
+                            <p>
+                                My Exam Timetable
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('exam_marks_teacher.index') }}"
+                            class="nav-link @if (Request::segment(2) == 'marks_register') active @endif">
+                            <i class="nav-icon far fas fa-poll"></i>
+                            <p>
+                                Marks Register
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin_teacher_side.index') }}"
+                            class="nav-link @if (Request::segment(2) == 'admin') active @endif">
+                            <i class="nav-icon fas fa-comments"></i>
+                            <p>
+                                Contact Admin
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('parent_teacher_side.index') }}"
+                            class="nav-link @if (Request::segment(2) == 'parent') active @endif">
+                            <i class="nav-icon fas fa-comments"></i>
+                            <p>
+                                Contact Parent
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item has-treeview @if (Request::segment(2) == 'student_management' ||
+                            Request::segment(2) == 'student_management' ||
+                            Request::segment(2) == 'student_management' ||
+                            Request::segment(2) == 'student_management') menu-open @endif">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-briefcase"></i>
+                            <p>
+                                Student Management
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('attendance_teacher.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'attendance') active @endif">
+                                    <i class="nav-icon far fas fa-check-circle"></i>
+                                    <p>
+                                        Attendance
+                                    </p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('attendance_report_teacher.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'attendance_report') active @endif">
+                                    <i class="nav-icon far fas fa-file-alt"></i>
+                                    <p>
+                                        Attendance Report
+                                    </p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('homework_teacher.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'homework') active @endif">
+                                    <i class="nav-icon far fas fa-tasks"></i>
+                                    <p>
+                                        Homework
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('teacher_settings.index') }}"
                             class="nav-link @if (Request::segment(2) == 'profile') active @endif">
                             <i class="nav-icon far fas fa-cogs"></i>
                             <p>
@@ -398,21 +493,75 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="{{ route('admin_settings.index') }}"
-                            class="nav-link @if (Request::segment(2) == 'profile') active @endif">
-                            <i class="nav-icon far fas fa-cogs"></i>
+                        <a href="{{ route('student.my_exam_timetable') }}"
+                            class="nav-link @if (Request::segment(2) == 'my_exam_timetable') active @endif">
+                            <i class="nav-icon far fa-calendar-alt"></i>
                             <p>
-                                Account Settings
+                                My Exam Timetable
                             </p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="{{ url('student/change_password') }}"
-                            class="nav-link @if (Request::segment(2) == 'change_password') active @endif">
-                            <i class="nav-icon far fa-user"></i>
+                        <a href="{{ route('admin_student_side.index') }}"
+                            class="nav-link @if (Request::segment(2) == 'admin') active @endif">
+                            <i class="nav-icon fas fa-comments"></i>
                             <p>
-                                Change Password
+                                Contact Admin
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('teacher_student_side.index') }}"
+                            class="nav-link @if (Request::segment(2) == 'teacher') active @endif">
+                            <i class="nav-icon fas fa-comments"></i>
+                            <p>
+                                Contact Teacher
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item has-treeview @if (Request::segment(2) == 'my_academic_info' ||
+                            Request::segment(2) == 'my_academic_info' ||
+                            Request::segment(2) == 'my_academic_info' ||
+                            Request::segment(2) == 'my_academic_info') menu-open @endif">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-briefcase"></i>
+                            <p>
+                                My Academic Info
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('attendance_report_student.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'attendance_report') active @endif">
+                                    <i class="nav-icon far fas fa-check-circle"></i>
+                                    <p>
+                                        My Attendance
+                                    </p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('homework_student.index') }}"
+                                    class="nav-link @if (Request::segment(3) == 'my_homework') active @endif">
+                                    <i class="nav-icon far fas fa-tasks"></i>
+                                    <p>
+                                        My Homework
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('student_settings.index') }}"
+                            class="nav-link @if (Request::segment(2) == 'profile') active @endif">
+                            <i class="nav-icon far fas fa-cogs"></i>
+                            <p>
+                                Account Settings
                             </p>
                         </a>
                     </li>
@@ -432,13 +581,33 @@
                             class="nav-link @if (Request::segment(2) == 'my_student') active @endif">
                             <i class="nav-icon fas fa-child"></i>
                             <p>
-                                My Student
+                                My Student Information
                             </p>
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="{{ route('admin_settings.index') }}"
+                        <a href="{{ route('admin_parent_side.index') }}"
+                            class="nav-link @if (Request::segment(2) == 'admin') active @endif">
+                            <i class="nav-icon fas fa-comments"></i>
+                            <p>
+                                Contact Admin
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('teacher_parent_side.index') }}"
+                            class="nav-link @if (Request::segment(2) == 'teacher') active @endif">
+                            <i class="nav-icon fas fa-comments"></i>
+                            <p>
+                                Contact Teacher
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('parent_settings.index') }}"
                             class="nav-link @if (Request::segment(2) == 'profile') active @endif">
                             <i class="nav-icon far fas fa-cogs"></i>
                             <p>

@@ -75,6 +75,7 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Name</th>
+                                            <th>Fees Amount ($)</th>
                                             <th>Status</th>
                                             <th>Created By</th>
                                             <th>Updated By</th>
@@ -87,6 +88,7 @@
                                             <tr>
                                                 <td>{{ $value->id }}</td>
                                                 <td>{{ $value->name }}</td>
+                                                <td>$ {{ $value->fees_amount }}</td>
                                                 <td>
                                                     @if ($value->status == 1)
                                                         Active

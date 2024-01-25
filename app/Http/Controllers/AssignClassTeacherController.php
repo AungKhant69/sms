@@ -62,6 +62,10 @@ class AssignClassTeacherController extends Controller
                         'status' => $request->status,
                         'created_by' => Auth::user()->id,
                     ]);
+
+                    // $teacher = User::findOrFail($teacher_id);
+                    // $teacher->class_id = $request->class_id;
+                    // $teacher->save();
                 }
             }
 
@@ -237,10 +241,9 @@ class AssignClassTeacherController extends Controller
 
     private function getMyClassSubject($teacher_id)
     {
-        return AssignClassTeacherModel::with(['assignedClass.subjects'])
-        ->where('teacher_id', $teacher_id)
-        ->where('status', 1)
-        ->get();
-
+        return AssignClassTeacherModel::with(['assignedClasses.subjects'])
+            ->where('teacher_id', $teacher_id)
+            ->where('status', 1)
+            ->get();
     }
 }

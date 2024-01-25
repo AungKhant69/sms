@@ -71,7 +71,7 @@
                                 <h3 class="card-title">All Students</h3>
                             </div>
                             <!-- /.card-header -->
-                            <div class="card-body p-0">
+                            <div class="card-body p-0" style="overflow: auto;">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
@@ -114,11 +114,13 @@
                                                             @method('delete')
                                                             <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete?')">Delete</button>
                                                         </form>
+                                                    <a href="{{ route('chat.index', ['receiver_id' => base64_encode($value->id)]) }}"
+                                                        class="btn btn-success">Send Message</a>
                                                 </td>
                                             </tr>
                                             @empty
                                             <tr>
-                                                <td colspan="9" class="text-center">No Matching Search Results</td>
+                                                <td colspan="100%" class="text-center">No Matching Search Results</td>
                                             </tr>
                                         @endforelse
 

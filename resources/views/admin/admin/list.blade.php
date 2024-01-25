@@ -92,6 +92,8 @@
                                                     {{-- HTML parsing  --}}
                                                     @if (!empty($record->profile_pic))
                                                         {!! FormHelper::getProfile($record->profile_pic) !!}
+                                                    @else
+                                                        <img src="{{ asset('dist/img/default-avatar-profile-icon-grey-photo-placeholder-vector-17317730.jpg') }}" alt="Default Image" style="height: 50px; width: 50px; border-radius: 50px">
                                                     @endif
                                                 </td>
                                                 <td>{{ $record->name }}</td>
@@ -108,6 +110,8 @@
                                                         @method('delete')
                                                         <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete?')">Delete</button>
                                                     </form>
+                                                    <a href="{{ route('chat.index', ['receiver_id' => base64_encode($record->id)]) }}" class="btn btn-success">Send Message</a>
+
                                                 </td>
                                             </tr>
                                             @empty

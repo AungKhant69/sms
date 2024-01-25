@@ -36,6 +36,36 @@ class AdminController extends Controller
         ]);
     }
 
+    public function index_teacher_side()
+    {
+        $this->data['getAdmin'] = $this->getAdmin();
+        $this->data['header_title'] = 'Contact Admin';
+
+        return view('teacher.contact_admin')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    public function index_student_side()
+    {
+        $this->data['getAdmin'] = $this->getAdmin();
+        $this->data['header_title'] = 'Contact Admin';
+
+        return view('student.contact_admin')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    public function index_parent_side()
+    {
+        $this->data['getAdmin'] = $this->getAdmin();
+        $this->data['header_title'] = 'Contact Admin';
+
+        return view('parent.contact_admin')->with([
+            'data' => $this->data,
+        ]);
+    }
+
     public function create()
     {
         $this->data['header_title'] = 'Add New Admin';
@@ -210,5 +240,14 @@ class AdminController extends Controller
             'date' => $request->get('date'),
         ]);
         return $paginator;
+    }
+
+    private function getAdmin()
+    {
+        $query = User::where('user_type', 1);
+
+        $paginator = $query->orderBy('name', 'asc')->paginate($this->pagination);
+        return $paginator;
+
     }
 }

@@ -11,6 +11,11 @@ use App\Http\Requests\UpdateSettingsRequest;
 
 class ProfileController extends Controller
 {
+//     public function __construct()
+// {
+//     $this->middleware('auth');
+// }
+
     public function showSettings()
     {
         return view('admin.profile');
@@ -18,7 +23,7 @@ class ProfileController extends Controller
 
     public function updateSettings(UpdateSettingsRequest $request)
     {
-        $user = Auth::user(); // Using Auth facade
+        $user = Auth::user();
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);

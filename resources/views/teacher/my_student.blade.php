@@ -35,7 +35,7 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th>Student ID</th>
                                             <th>Profile Pic</th>
                                             <th>Student Name</th>
                                             <th>Parent Name</th>
@@ -43,10 +43,12 @@
                                             <th>Email</th>
                                             <th>Gender</th>
                                             <th>Created Date</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($data['getMyStudent'] as $value)
+                                        {{-- @dd($data['getMyStudent']) --}}
                                             <tr>
                                                 <td>{{ $value->id }}</td>
                                                 <td>
@@ -61,6 +63,10 @@
                                                 <td>{{ $value->email }}</td>
                                                 <td>{{ $value->gender }}</td>
                                                 <td>{{ $value->created_at->format(auth()->user()->date_format) }}</td>
+                                                <td>
+                                                    <a href="{{ route('chat.index', ['receiver_id' => base64_encode($value->id)]) }}"
+                                                        class="btn btn-success">Send Message</a>
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>

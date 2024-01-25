@@ -5,10 +5,12 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 // use Illuminate\Http\Request;
 
 class User extends Authenticatable
@@ -84,6 +86,11 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'student_id');
     }
 
+    public function amount()
+    {
+        return $this->belongsTo(AddStudentFeesModel::class, 'class_id');
+    }
+
     // public function myStudent()
     // {
     //     return $this->hasMany(User::class, 'class_id');
@@ -99,10 +106,15 @@ class User extends Authenticatable
         return $this->belongsTo(ClassModel::class, 'class_id');
     }
 
-    // public function assignedClasses()
-    // {
-    //     return $this->belongsToMany(ClassModel::class, 'assign_class_teacher', 'teacher_id', 'class_id');
-    // }
+    public function subjectData()
+    {
+        return $this->belongsTo(SubjectModel::class, 'subject_id');
+    }
+
+    public function classTeachers()
+    {
+        return $this->hasMany(AssignClassTeacherModel::class, 'class_id', 'class_id');
+    }
 
     static public function getEmailSingle($email)
     { //becoz we need to use inside controller
@@ -114,5 +126,26 @@ class User extends Authenticatable
         return self::where('remember_token', '=', $remember_token)->first();
     }
 
+    static public function getPaidAmount($student_id, $class_id)
+    {
+        return AddStudentFeesModel::where('student_id', $student_id)
+            ->where('class_id', $class_id)
+            ->sum('add_student_fees.paid_amount');
+    }
 
+    public function getProfileDirect()
+    {
+        $profilePicPath = 'public/uploads/' . $this->profile_pic;
+
+        if (!empty($this->profile_pic) && Storage::exists($profilePicPath)) {
+            return Storage::url($profilePicPath);
+        } else {
+            return asset('dist/img/default-avatar-profile-icon-grey-photo-placeholder-vector-17317730.jpg');
+        }
+    }
+
+     public function OnlineUser()
+    {
+        return Cache::has('OnlineUser' . $this->id);
+    }
 }

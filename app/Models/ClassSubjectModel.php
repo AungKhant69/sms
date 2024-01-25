@@ -33,6 +33,11 @@ class ClassSubjectModel extends Model
         return $this->belongsTo(SubjectModel::class, 'subject_id');
     }
 
+    public function homeworks()
+    {
+        return $this->hasMany(HomeworkModel::class, 'subject_id');
+    }
+
 }
 
 

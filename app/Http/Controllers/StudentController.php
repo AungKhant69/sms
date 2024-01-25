@@ -15,6 +15,7 @@ use App\Models\AssignClassTeacherModel;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use App\Http\Requests\UpdateSettingsRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class StudentController extends Controller
@@ -95,13 +96,13 @@ class StudentController extends Controller
         $student = User::findOrFail($id);
 
         if (!empty($request->file('profile_pic'))) {
-            if (!empty($student->profile_pic)) {
-                // Use the getProfile method from FormHelper
-                $imageUrl = FormHelper::getProfile($student->profile_pic);
 
-                // Now you can use $imageUrl as needed, for example, unlink the file
-                if (file_exists(public_path($imageUrl))) {
-                    unlink(public_path($imageUrl));
+            if (!empty($student->profile_pic)) {
+                $filename = $student->profile_pic;
+                $path = 'storage/uploads/' . $filename;
+
+                if (file_exists(public_path($path))) {
+                    unlink(public_path($path));
                 }
             }
             $extension = $request->file('profile_pic')->getClientOriginalExtension();
@@ -245,39 +246,38 @@ class StudentController extends Controller
 
     private function getMyStudent($teacher_id)
     {
-
-        $paginator = User::where('users.user_type', '=', 3)
-            ->whereHas('assignClassTeacher', function ($query) use ($teacher_id) {
-                $query->where('teacher_id', '=', $teacher_id)
-                    ->where('status', '=', 1);
+        $students = User::where('users.user_type', '=', 3)
+            ->whereHas('classTeachers', function ($query) use ($teacher_id) {
+                $query->where('assign_class_teacher.teacher_id', '=', $teacher_id)
+                    ->where('assign_class_teacher.status', '=', 1);
             })
-            ->with(['classData', 'parent', 'student'])
-            ->orderBy('users.id', 'desc')
+            ->with('classData', 'parent')
+            ->orderBy('users.id', 'asc')
             ->paginate($this->pagination);
 
-        return $paginator;
+        return $students;
+    }
 
-        // $query = User::where('users.user_type', '=', 3)
-        //     ->join('class', 'class_id', '=', 'users.class_id')
-        //     ->join('assign_class_teacher', 'assign_class_teacher.class_id', '=', 'class.id')
-        //     ->where('assign_class_teacher.teacher_id', '=', $teacher_id)
-        //     ->where('assign_class_teacher.status', '=', 1)
-        //     ->select('users.*')
-        //     ->with('classData', 'parent', 'student')
-        //     ->orderBy('users.id', 'desc');
+    // ********** Student Profile Settings ****************
+    public function showSettings()
+    {
+        return view('admin.student.profile');
+    }
 
-        // $paginator = $query->paginate($this->pagination);
+    public function updateSettings(UpdateSettingsRequest $request)
+    {
+        $user = Auth::user();
 
-        // return $paginator;
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
 
-        // $students = User::where('user_type', 3)
-        //     ->whereHas('assignClassTeacher.classData', function ($query) use ($teacher_id) {
-        //         $query->where('assign_class_teacher.teacher_id', $teacher_id);
-        //     })
-        //     ->with('parent', 'classData', 'assignClassTeacher')
-        //     ->orderBy('id', 'desc')
-        //     ->paginate($this->pagination);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->date_format = $request->date_format;
 
-        // return $students;
+        $user->save();
+
+        return redirect()->back()->with('success', 'Profile updated.');
     }
 }

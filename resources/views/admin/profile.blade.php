@@ -24,8 +24,8 @@
                             @include('_message')
 
                             <form action="{{ route('admin_settings.update') }}" method="POST">
-                                @method('PATCH')
                                 @csrf
+                                @method('PATCH')
 
                                 <div class="card-body">
 

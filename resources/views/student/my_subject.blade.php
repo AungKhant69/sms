@@ -41,8 +41,11 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($data['getSubject'] as $value)
+                                        <tr>
                                             <td>{{ $value?->subjectData?->name }}</td>
                                             <td>{{ $value?->subjectData?->type }}</td>
+                                        </tr>
+
                                         @empty
                                             <tr>
                                                 <td colspan="2" class="text-center">No Matching Search Results</td>

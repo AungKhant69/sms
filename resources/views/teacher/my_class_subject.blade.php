@@ -42,16 +42,16 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($data['getClassSubject'] as $value)
-                                            @forelse ($value->assignedClass->subjects as $subject)
+                                            @forelse ($value->assignedClasses->subjects as $subject)
                                                 <tr>
-                                                    <td>{{ $value->assignedClass->name }}</td>
+                                                    <td>{{ $value->assignedClasses->name }}</td>
                                                     <td>{{ $subject->name }}</td>
                                                     <td>{{ $subject->type }}</td>
                                                     <td>{{ $value->created_at->format(auth()->user()->date_format) }}</td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td>{{ $value->assignedClass->name }}</td>
+                                                    <td>{{ $value->assignedClasses->name }}</td>
                                                     <td colspan="3" class="text-center">No Subjects</td>
                                                 </tr>
                                             @endforelse

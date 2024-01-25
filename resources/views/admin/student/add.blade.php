@@ -23,7 +23,8 @@
 
                         <div class="card card-primary">
 
-                            <form method="post" action="{{ route('admin_student.store') }}" enctype="multipart/form-data" novalidate>
+                            <form method="post" action="{{ route('admin_student.store') }}" enctype="multipart/form-data"
+                                novalidate>
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
@@ -31,7 +32,7 @@
                                             <label>Name <span style="color:red">*</span></label>
                                             <input type="text" class="form-control" value="{{ old('name') }}"
                                                 name="name" required placeholder="Enter Name">
-                                                @error('name')
+                                            @error('name')
                                                 <p class="text-danger">{{ $message }}</p>
                                             @enderror
                                         </div>

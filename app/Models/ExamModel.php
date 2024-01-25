@@ -21,4 +21,9 @@ class ExamModel extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function examSchedules()
+    {
+        return $this->hasMany(ExamScheduleModel::class, 'exam_id');
+    }
 }

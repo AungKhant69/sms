@@ -8,9 +8,11 @@ use App\Helper\FormHelper;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateParentRequest;
+use App\Http\Requests\UpdateSettingsRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TeacherController extends Controller
@@ -31,6 +33,26 @@ class TeacherController extends Controller
     {
         $this->data['getRecord'] = $this->getTeacher($request);
         return view('admin.teacher.list')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    public function index_student_side()
+    {
+        $this->data['contactTeacher'] = $this->contactTeacher();
+        $this->data['header_title'] = 'Contact Teacher';
+
+        return view('student.contact_teacher')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    public function index_parent_side()
+    {
+        $this->data['contactTeacher'] = $this->contactTeacher();
+        $this->data['header_title'] = 'Contact Teacher';
+
+        return view('parent.contact_teacher')->with([
             'data' => $this->data,
         ]);
     }
@@ -87,15 +109,14 @@ class TeacherController extends Controller
     {
         $teacher = User::findOrFail($id);
 
-        if (!empty($request->file('profile_pic')))
-        {
-            if (!empty($teacher->profile_pic)) {
-                // Use the getProfile method from FormHelper
-                $imageUrl = FormHelper::getProfile($teacher->profile_pic);
+        if (!empty($request->file('profile_pic'))) {
 
-                // Now you can use $imageUrl as needed, for example, unlink the file
-                if (file_exists(public_path($imageUrl))) {
-                    unlink(public_path($imageUrl));
+            if (!empty($teacher->profile_pic)) {
+                $filename = $teacher->profile_pic;
+                $path = 'storage/uploads/' . $filename;
+
+                if (file_exists(public_path($path))) {
+                    unlink(public_path($path));
                 }
             }
             $extension = $request->file('profile_pic')->getClientOriginalExtension();
@@ -213,5 +234,38 @@ class TeacherController extends Controller
             'date' => $request->get('date'),
         ]);
         return $paginator;
+    }
+
+    // ********** Teacher Profile Settings ****************
+    public function showSettings()
+    {
+        return view('admin.teacher.profile');
+    }
+
+    public function updateSettings(UpdateSettingsRequest $request)
+    {
+        $user = Auth::user();
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->date_format = $request->date_format;
+
+        $user->save();
+
+        return redirect()->back()->with('success', 'Profile updated.');
+    }
+
+    private function contactTeacher()
+    {
+        $teachers = User::where('user_type', 2)
+        ->with(['assignClassTeacher.classData'])
+        ->orderBy('name', 'asc')
+        ->paginate($this->pagination);
+
+    return $teachers;
     }
 }

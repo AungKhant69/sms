@@ -11,7 +11,7 @@ class ClassModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'class';
-    protected $fillable = ['name', 'created_by', 'updated_by', 'status'];
+    protected $fillable = ['name', 'created_by', 'updated_by', 'status', 'fees_amount'];
 
     public function subjects()
     {
@@ -38,6 +38,11 @@ class ClassModel extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function examSchedules()
+    {
+        return $this->hasMany(ExamScheduleModel::class, 'class_id');
     }
 
     // public function subjectData()

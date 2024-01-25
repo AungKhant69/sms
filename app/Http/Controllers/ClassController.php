@@ -50,6 +50,7 @@ class ClassController extends Controller
         try {
             $class = ClassModel::create([
                 'name' => $request->name,
+                'fees_amount' => $request->fees_amount,
                 'status' => $request->status,
                 'created_by' => auth()->user()->id,
             ]);
@@ -79,6 +80,11 @@ class ClassController extends Controller
         $request->validate([
             'name' => 'string|max:255',
             'status' => 'required|in:1,0',
+            'fees_amount' => [
+                'required',
+                'numeric',
+                'between:1.00,9999999.99',
+            ],
         ]);
 
         try {
@@ -86,6 +92,7 @@ class ClassController extends Controller
 
             $class->update([
                 'name' => $request->name,
+                'fees_amount' => $request->fees_amount,
                 'status' => $request->status,
                 'updated_by' => auth()->user()->id,
             ]);
@@ -154,7 +161,7 @@ class ClassController extends Controller
 
     private function getList(Request $request)
     {
-        $query  = ClassModel::with('createdBy', 'updatedBy')->whereNull('class.deleted_at');
+        $query  = ClassModel::with('createdBy', 'updatedBy');
         if (!empty($request->get('name'))) {
             $query = $query->where('class.name', 'like', '%' . $request->get('name') . '%');
         }

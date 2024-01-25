@@ -36,6 +36,15 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <label>Fees Amount ($)</label>
+                                        <input type="number" class="form-control" name="fees_amount" required
+                                            placeholder="Enter Fees Amount">
+                                        @error('name')
+                                            <p class="text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
                                         <label>Status</label>
                                         <div>
                                             <label class="radio-inline">

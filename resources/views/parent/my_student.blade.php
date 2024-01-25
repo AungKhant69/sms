@@ -62,12 +62,18 @@
                                                 <td>{{ $value->email }}</td>
                                                 <td>{{ $value->created_at->format(auth()->user()->date_format) }}</td>
                                                 <td>
-                                                    <a class="btn btn-primary btn-sm" href="{{ route('parent.ParentStudentSubject', ['student_id' => $value->id]) }}">Subject</a>
+                                                    <a class="btn btn-primary" href="{{ route('parent.ParentStudentSubject', ['student_id' => $value->id]) }}">Subject</a>
+                                                    <a href="{{ route('parent.exam_timetable', ['student_id' => $value->id]) }}" class="btn btn-primary">Exam Timetable</a>
+                                                    <a href="{{ route('parent.checkHomework', ['student_id' => $value->id]) }}" class="btn btn-primary">Homework</a>
+                                                    <a href="{{ route('fees_collection_parent.create', ['student_id' => $value->id]) }}"
+                                                        class="btn btn-success">Pay Fees</a>
+                                                    <a href="{{ route('chat.index', ['receiver_id' => base64_encode($value->id)]) }}"
+                                                        class="btn btn-success">Send Message</a>
                                                 </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center">No Matching Search Results</td>
+                                                <td colspan="100%" class="text-center">No Matching Search Results</td>
                                             </tr>
                                         @endforelse
 

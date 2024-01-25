@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreParentRequest;
 use App\Http\Requests\UpdateParentRequest;
+use App\Http\Requests\UpdateSettingsRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
@@ -34,6 +35,16 @@ class ParentController extends Controller
     {
         $this->data['getRecord'] = $this->getParent($request);
         return view('admin.parent.list')->with([
+            'data' => $this->data,
+        ]);
+    }
+
+    public function index_teacher_side()
+    {
+        $this->data['contactParent'] = $this->contactParent();
+        $this->data['header_title'] = 'Contact Parent';
+
+        return view('teacher.contact_parent')->with([
             'data' => $this->data,
         ]);
     }
@@ -91,13 +102,13 @@ class ParentController extends Controller
         $parent = User::findOrFail($id);
 
         if (!empty($request->file('profile_pic'))) {
-            if (!empty($parent->profile_pic)) {
-                // Use the getProfile method from FormHelper
-                $imageUrl = FormHelper::getProfile($parent->profile_pic);
 
-                // Now you can use $imageUrl as needed, for example, unlink the file
-                if (file_exists(public_path($imageUrl))) {
-                    unlink(public_path($imageUrl));
+            if (!empty($parent->profile_pic)) {
+                $filename = $parent->profile_pic;
+                $path = 'storage/uploads/' . $filename;
+
+                if (file_exists(public_path($path))) {
+                    unlink(public_path($path));
                 }
             }
             $extension = $request->file('profile_pic')->getClientOriginalExtension();
@@ -287,5 +298,36 @@ class ParentController extends Controller
         return view('parent.my_student')->with([
             'data' => $this->data,
         ]);
+    }
+
+    // ********** Parent Profile Settings ****************
+    public function showSettings()
+    {
+        return view('admin.parent.profile');
+    }
+
+    public function updateSettings(UpdateSettingsRequest $request)
+    {
+        $user = Auth::user();
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->date_format = $request->date_format;
+
+        $user->save();
+
+        return redirect()->back()->with('success', 'Profile updated.');
+    }
+
+    private function contactParent()
+    {
+        $query = User::where('user_type', 4);
+
+        $paginator = $query->orderBy('name', 'asc')->paginate($this->pagination);
+        return $paginator;
     }
 }
