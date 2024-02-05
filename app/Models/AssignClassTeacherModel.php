@@ -32,11 +32,6 @@ class AssignClassTeacherModel extends Model
         return $this->belongsTo(ClassModel::class, 'class_id');
     }
 
-    // public function studentData()
-    // {
-    //     return $this->belongsTo(User::class, 'student_id');
-    // }
-
     public function classData()
     {
         return $this->belongsTo(ClassModel::class, 'class_id');
@@ -47,17 +42,4 @@ class AssignClassTeacherModel extends Model
         return $this->belongsTo(SubjectModel::class, 'subject_id');
     }
 
-    // public function classSubject()
-    // {
-    //     return $this->belongsTo(ClassSubjectModel::class, 'class_id', 'subject_id');
-    // }
-
-    // public function classSubjectTeacher(){
-    //     return $this->hasManyThrough(
-    //         SubjectModel::class,
-    //         ClassSubjectModel::class,
-    //         'class_id',
-    //         'id'
-    //     );
-    // }
 }

@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- @dd($data['getRecord']->total()) --}}
+
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -17,12 +17,9 @@
                     </div>
 
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
-
-
-        <!-- Main content -->
         <section class="content">
 
             <div class="container-fluid">
@@ -96,10 +93,10 @@
                                                 <td>{{ $record?->createdBy?->name }}</td>
                                                 <td>{{ $record?->updatedBy?->name }}</td>
                                                 <td>{{ $record->created_at->format(auth()->user()->date_format) }}</td>
-                                                {{-- <td>{{ date('m-d-Y H:i A', strtotime($record->created_at)) }}</td> --}}
+
                                                 <td>
                                                     <a href="{{ route('exam.edit', ['id' => $record->id]) }}" class="btn btn-primary">Edit</a>
-                                                    {{-- Form for delete action --}}
+
                                                     <form action="{{ route('exam.destroy', ['id' => $record->id]) }}" method="post" style="display:inline;">
                                                         @csrf
                                                         @method('delete')
@@ -124,17 +121,15 @@
 
 
                             </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
 
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
         </section>
-        <!-- /.content -->
+
     </div>
 @endsection

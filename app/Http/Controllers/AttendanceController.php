@@ -93,7 +93,7 @@ class AttendanceController extends Controller
                     $existingRecord = $this->NoDuplicateRecord($request->class_id, $request->attendance_date, $request->student_id);
 
                     if (!empty($existingRecord)) {
-                        // Update existing record
+
                         $existingRecord->update([
                             'attendance_type' => $attendance,
                             'updated_by' => Auth::user()->id,
@@ -126,7 +126,7 @@ class AttendanceController extends Controller
                     $existingRecord = $this->NoDuplicateRecord($request->class_id, $request->attendance_date, $request->student_id);
 
                     if (!empty($existingRecord)) {
-                        // Update existing record
+
                         $existingRecord->update([
                             'attendance_type' => $attendance,
                             'updated_by' => Auth::user()->id,
@@ -157,7 +157,7 @@ class AttendanceController extends Controller
             ->where('student_id', $student_id)->first();
     }
 
-    // Attendance Report
+    // Attendance Report side
 
     public function AttendanceReport(Request $request)
     {

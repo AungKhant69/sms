@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('business_email', function (Blueprint $table) {
-            $table->id();
-            $table->string('stripe_email')->unique();
-            $table->integer('stripe_key')->nullable();
-            $table->string('stripe_secret')->nullable();
-            $table->timestamps();
+        Schema::table('add_student_fees', function (Blueprint $table) {
+            $table->unsignedBigInteger('payment_id')->unique()->after('payment_type')->nullable();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('business_email');
+        Schema::table('add_student_fees', function (Blueprint $table) {
+            $table->dropColumn('payment_id');
+        });
     }
 };

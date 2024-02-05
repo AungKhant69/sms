@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\Request;
+
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +10,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-// use Illuminate\Http\Request;
 
 class User extends Authenticatable
 {
@@ -91,11 +89,6 @@ class User extends Authenticatable
         return $this->belongsTo(AddStudentFeesModel::class, 'class_id');
     }
 
-    // public function myStudent()
-    // {
-    //     return $this->hasMany(User::class, 'class_id');
-    // }
-
     public function assignClassTeacher()
     {
         return $this->hasOne(AssignClassTeacherModel::class, 'teacher_id');
@@ -116,13 +109,13 @@ class User extends Authenticatable
         return $this->hasMany(AssignClassTeacherModel::class, 'class_id', 'class_id');
     }
 
-    static public function getEmailSingle($email)
-    { //becoz we need to use inside controller
+    public static function getEmailSingle($email)
+    {
         return self::where('email', '=', $email)->first();
     }
 
-    static public function getTokenSingle($remember_token)
-    { //becoz we need to use inside controller
+    public static function getTokenSingle($remember_token)
+    {
         return self::where('remember_token', '=', $remember_token)->first();
     }
 

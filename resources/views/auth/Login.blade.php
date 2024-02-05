@@ -52,34 +52,26 @@
               </label>
             </div>
           </div>
-          <!-- /.col -->
+
           <div class="col-4">
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
           </div>
-          <!-- /.col -->
+
         </div>
       </form>
 
-      {{-- <div class="social-auth-links text-center mt-2 mb-3">
-        <a href="#" class="btn btn-block btn-primary">
-          <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-        </a>
-        <a href="#" class="btn btn-block btn-danger">
-          <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-        </a>
-      </div> --}}
-      <!-- /.social-auth-links -->
+
 
       <p class="mb-1">
         <a href="{{ url('forgot-password') }}">Forgot your password?</a>
       </p>
 
     </div>
-    <!-- /.card-body -->
+
   </div>
-  <!-- /.card -->
+
 </div>
-<!-- /.login-box -->
+
 
 <!-- jQuery -->
 <script src="{{ url('plugins/jquery/jquery.min.js') }}"></script>

@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- @dd($data['getRecord']->total()) --}}
+
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -11,12 +11,9 @@
                         <h1>Student Attendance</h1>
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
-
-
-        <!-- Main content -->
         <section class="content">
 
             <div class="container-fluid">
@@ -139,17 +136,12 @@
                             </div>
                         @endif
 
-
-
-                        <!-- /.card -->
                     </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
 
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
+                </div>
+
+            </div>
         </section>
-        <!-- /.content -->
+
     </div>
 @endsection

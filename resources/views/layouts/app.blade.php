@@ -38,16 +38,14 @@
   @yield('content')
   @include('layouts.footer')
 </div>
-<!-- ./wrapper -->
+
 
 <!-- jQuery -->
-{{-- <script src="{{ asset('laravel-echo-server.js') }}" defer></script> --}}
 
 <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
-{{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> --}}
 <!-- jQuery UI 1.11.4 -->
 <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script>
-<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+
 <script>
   $.widget.bridge('uibutton', $.ui.button)
 </script>
@@ -76,12 +74,11 @@
 
 <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
 
-<!-- Add this at the end of your Blade view -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-    // Wait for the document to be ready
+
     $(document).ready(function() {
-        // Set the timeout to hide the alert after 5 seconds (5000 milliseconds)
+        // Set the timeout to hide the alert after 4 seconds (4000 milliseconds)
         setTimeout(function() {
             $('.alert').fadeOut('slow');
         }, 4000);

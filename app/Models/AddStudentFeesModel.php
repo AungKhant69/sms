@@ -17,6 +17,7 @@ class AddStudentFeesModel extends Model
         'paid_amount',
         'remaining_amount',
         'payment_type',
+        'payment_id',
         'message',
         'created_by',
         'updated_by',

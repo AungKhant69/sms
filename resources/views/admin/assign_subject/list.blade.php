@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -17,17 +17,14 @@
                     </div>
 
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
-
-        <!-- Main content -->
         <section class="content">
 
             <div class="container-fluid">
                 <div class="row">
 
-                    <!-- /.col -->
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
@@ -76,7 +73,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">All Assigned Subjects</h3>
                             </div>
-                            <!-- /.card-header -->
+
                             <div class="card-body p-0">
                                 <table class="table table-striped">
                                     <thead>
@@ -142,17 +139,15 @@
 
 
                             </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
 
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
         </section>
-        <!-- /.content -->
+
     </div>
 @endsection

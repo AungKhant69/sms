@@ -30,7 +30,7 @@
 
     <li class="clearfix">
         <div class="message-data">
-            {{-- @dd($data['getChatData']) --}}
+
             <span href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
                 @if (!empty($data['getReceiver']->profile_pic))
                     {!! FormHelper::getProfile($data['getReceiver']->profile_pic) !!}

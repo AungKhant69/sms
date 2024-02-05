@@ -38,7 +38,7 @@
                                                 <td>{{ $record->homework_date->format(auth()->user()->date_format) }}</td>
                                                 <td>{{ $record->deadline->format(auth()->user()->date_format) }}</td>
                                                 <td>
-                                                    {{-- {{ $record->getDocument() }} --}}
+
                                                     @if (!empty($record->getDocument()))
                                                         <a href="{{ $record->getDocument() }}" class="btn btn-success"
                                                             download>Download</a>

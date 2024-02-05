@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -10,23 +10,15 @@
                         <h1>Assign Parent Student Relationship</h1>
                     </div>
 
-                    {{-- <div class="col-sm-6" style="text-align: right">
-                        <a href="{{ route('admin_parent.deletedList') }}" class="btn btn-primary">Show Deleted Parents</a>
-                        <a href="{{ route('admin_parent.create') }}" class="btn btn-primary">Add New Parent</a>
-                    </div> --}}
-
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
-
-        <!-- Main content -->
         <section class="content">
 
             <div class="container-fluid">
                 <div class="row">
 
-                    <!-- /.col -->
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
@@ -68,7 +60,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Student List</h3>
                             </div>
-                            <!-- /.card-header -->
+
                             <div class="card-body p-0">
                                 <table class="table table-striped">
                                     <thead>
@@ -125,7 +117,7 @@
 
 
                             </div>
-                            <!-- /.card-body -->
+
                         </div>
 
 
@@ -133,7 +125,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Student(s) of this Parent</h3>
                             </div>
-                            <!-- /.card-header -->
+
                             <div class="card-body p-0" style="overflow: auto;">
                                 <table class="table table-striped">
                                     <thead>
@@ -191,15 +183,15 @@
 
 
                             </div>
-                            <!-- /.card-body -->
+
                         </div>
-                        <!-- /.card -->
+
                     </div>
-                    <!-- /.col -->
+
                 </div>
 
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
-        <!-- /.content -->
+
     </div>
 @endsection

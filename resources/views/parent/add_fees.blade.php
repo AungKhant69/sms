@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -15,16 +15,14 @@
                     </div>
 
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
-        <!-- Main content -->
         <section class="content">
 
             <div class="container-fluid">
                 <div class="row">
 
-                    <!-- /.col -->
                     <div class="col-md-12">
 
                         @include('_message')
@@ -33,7 +31,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Payment Details</h3>
                             </div>
-                            <!-- /.card-header -->
+
                             <div class="card-body p-0">
                                 <table class="table table-striped">
                                     <thead>
@@ -69,18 +67,16 @@
                                 </table>
 
                             </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
 
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
         </section>
-        <!-- /.content -->
+
     </div>
 
     <div class="modal fade" id="AddFeesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -113,9 +109,9 @@
 
                         <div class="form-group">
                             <label class="col-form-label">Paid Amount : $
-                                {{-- @dd($data['getFees']) --}}
+
                                 @if (isset($data['getFees'][0]))
-                                    <!-- Check if the array is not empty -->
+
                                     {{ number_format($data['getFees'][0]->paid_amount, 2) }}
                                 @else
                                     N/A
@@ -136,9 +132,7 @@
                         <div class="form-group">
                             <label class="col-form-label">Select Amount to Add <span style="color: red;">*</span></label>
                             <input type="number" class="form-control" name="amount">
-                            {{-- @error('amount')
-                                <p class="text-danger">{{ $message }}</p>
-                            @enderror --}}
+
                         </div>
 
                         <div class="form-group">
@@ -147,18 +141,14 @@
                                 <option value="">Select</option>
                                 <option value="Cash">Cash</option>
                                 <option value="Stripe">Stripe</option>
-                                {{-- @error('payment_type')
-                                    <p class="text-danger">{{ $message }}</p>
-                                @enderror --}}
+
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label class="col-form-label">Message:</label>
                             <textarea class="form-control" name="message"></textarea>
-                            {{-- @error('message')
-                                <p class="text-danger">{{ $message }}</p>
-                            @enderror --}}
+
                         </div>
 
 

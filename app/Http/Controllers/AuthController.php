@@ -17,7 +17,6 @@ class AuthController extends Controller
 
     public function login()
     {
-        // dd(Hash::make(123456));
         if (!empty(Auth::check())) {
             if (Auth::user()->user_type == 1) {
                 return redirect('admin/dashboard');
@@ -72,6 +71,7 @@ class AuthController extends Controller
     public function reset($remember_token)
     {
         $user = User::getTokenSingle($remember_token);
+
         if (!empty($user)) {
             $data['user'] = $user;
             return view('auth.reset', $data);
@@ -80,18 +80,25 @@ class AuthController extends Controller
         }
     }
 
-    public function postReset($token, Request $request){
-        if($request->password == $request->password_confirmation){
-            $user = User::getTokenSingle($token);
-            $user->password = Hash::make($request->password);
-            $user->remember_token = Str::random(30);
-            $user->save();
+    public function postReset($token, Request $request)
+    {
+        $user = User::getTokenSingle($token);
 
-            return redirect('')->with('success', 'Password reset successfully');
-        }else{
-            return redirect()->back()->with('error', 'Passoword and confirm password does not match');
+        if ($user) {
+            if ($request->password == $request->password_confirmation) {
+                $user->password = Hash::make($request->password);
+                $user->remember_token = Str::random(30);
+                $user->save();
+
+                return redirect(url(''))->with('success', 'Password successfully reset');
+            } else {
+                return redirect()->back()->with('error', 'Password and confirm password do not match');
+            }
+        } else {
+            return redirect()->back()->with('error', 'User not found for the provided token');
         }
     }
+
 
     public function logout()
     {

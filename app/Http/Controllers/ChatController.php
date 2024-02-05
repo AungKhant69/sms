@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Mail\Events\MessageSent;
 
 class ChatController extends Controller
 {
@@ -39,61 +38,19 @@ class ChatController extends Controller
             $this->data['receiver_id'] = $receiver_id;
             $this->data['getReceiver'] = User::findOrFail($receiver_id);
             $this->data['getChatData'] = $this->getChatData($receiver_id, $sender_id);
-            // dd($this->data['getChatData']);
 
         } else {
             $this->data['receiver_id'] = '';
         }
         $this->data['getChatUser'] = $this->getChatUser($sender_id);
-        // dd($this->data['getChatUser']);
 
         return view('chat.list')->with([
             'data' => $this->data,
         ]);
     }
 
-    // public function submit_message(Request $request)
-    // {
-    //     try {
-    //         $filename = null;
-
-    //         if (!empty($request->file('file_name'))) {
-    //             $ext = $request->file('file_name')->getClientOriginalExtension();
-    //             $file = $request->file('file_name');
-    //             $randomStr = date('Ymshis') . Str::random(20);
-    //             $filename = strtolower($randomStr) . '.' . $ext;
-    //             $file->move('uploads/chat', $filename);
-    //         }
-
-    //         $chat = ChatModel::create([
-    //             'sender_id' => Auth::user()->id,
-    //             'receiver_id' => $request->receiver_id,
-    //             'message' => $request->message,
-    //             'file' => $filename,
-    //         ]);
-
-    //         // Broadcasting the event to others
-    //         broadcast(new NewMessageEvent($chat))->toOthers();
-
-    //         return response()->json([
-    //             'status' => true,
-    //             'success' => [
-    //                 'getChat' => $chat,
-    //                 'formattedTime' => $chat->created_at->diffForHumans(),
-    //             ],
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'error' => $e->getMessage(),
-    //         ], 500);
-    //     }
-    // }
-
     public function submit_message(Request $request)
     {
-        // dd($request->all());
-        // $chat = new ChatModel;
         if (!empty($request->file('file_name'))) {
             $ext = $request->file('file_name')->getClientOriginalExtension();
             $file = $request->file('file_name');
@@ -174,9 +131,7 @@ class ChatController extends Controller
             $data['user_id'] = $value->connect_user_id;
             $data['is_online'] = $value->getConnectUser->OnlineUser();
             $data['name'] = $value->getConnectUser->name;
-            // $data['profile_pic'] = FormHelper::getProfile($value->getConnectUser->profile_pic);
             $data['profile_pic'] = $value->getConnectUser->getProfileDirect();
-            // dd($value->getConnectUser->profile_pic);
             $data['messageCount'] = $value->CountMessage($value->connect_user_id, $user_id);
             $result[] = $data;
         }

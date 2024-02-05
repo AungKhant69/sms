@@ -156,7 +156,7 @@ class ParentController extends Controller
     public function deletedList()
     {
         try {
-            // Fetch soft-deleted records with user_type = 4
+
             $softDeletedRecords = User::onlyTrashed()
                 ->where('user_type', 4)
                 ->get();
@@ -172,7 +172,7 @@ class ParentController extends Controller
     public function restore($id)
     {
         try {
-            // Restore soft-deleted record with user_type = 4
+
             User::withTrashed()
                 ->where('id', $id)
                 ->where('user_type', 4)
@@ -189,7 +189,7 @@ class ParentController extends Controller
     public function forceDelete($id)
     {
         try {
-            // Force delete soft-deleted record with user_type = 4
+
             User::withTrashed()
                 ->where('id', $id)
                 ->where('user_type', 4)

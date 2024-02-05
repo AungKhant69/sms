@@ -7,7 +7,6 @@ use App\Helper\FormHelper;
 use App\Models\ClassModel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ClassController extends Controller

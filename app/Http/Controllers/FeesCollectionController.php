@@ -6,13 +6,12 @@ use Exception;
 use Stripe\Stripe;
 use App\Models\User;
 use App\Helper\FormHelper;
-use App\Models\ClassModel;
 use Illuminate\Http\Request;
-use App\Models\BusinessEmailModel;
+use App\Mail\StripePaymentSuccess;
 use App\Models\AddStudentFeesModel;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreFeesRequest;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class FeesCollectionController extends Controller
@@ -31,53 +30,34 @@ class FeesCollectionController extends Controller
 
     public function collect_fees(Request $request)
     {
-        // dd($request->all());
-        $this->data['getClass'] = $this->getClass();
-        // dd($this->data['getClass']);
-        if (!empty($request->all())) {
-            $this->data['getRecord'] = $this->collectStudentFees($request, $request->get('class_id'));
-        }
+        $this->data['getRecord'] = $this->collectStudentFees($request);
 
         return view('admin.fees_collection.collect_fees')->with([
             'data' => $this->data,
         ]);
     }
 
-    private function getClass()
+    private function collectStudentFees(Request $request)
     {
-        $record = ClassModel::select('id', 'name', 'fees_amount')
-            ->where('class.status', '=', '1')
-            ->orderBy('class.name', 'asc')
-            ->get();
+        $query =  User::where('users.user_type', '=', 3)
+            ->with('parent', 'classData');
 
-        return $record;
-    }
-
-    private function collectStudentFees(Request $request, $class_id)
-    {
-        $query = User::where('users.user_type', '=', 3)
-            ->with('classData')
-            ->where('users.class_id', $class_id)
-            ->orderBy('users.id', 'desc');
-
-        if (!empty($request->get('class_id'))) {
-            $query = $query->where('users.class_id', '=', $request->get('class_id'));
+        if ($request->name != '') {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        if ($request->email != '') {
+            $query->where('email', 'like', '%' . $request->email . '%');
         }
 
-        // if (!empty($request->get('student_name'))) {
-        //     $query = $query->whereHas('student', function ($subQuery) use ($request) {
-        //         $subQuery->where('users.name', 'LIKE', '%' . $request->get('student_name') . '%');
-        //     });
-        // }
+        $paginator = $query->orderBy('id', 'desc')->paginate($this->pagination);
 
-        $paginator = $query->orderBy('users.id', 'desc')->paginate($this->pagination);
         $paginator->appends([
-            'class_id' => $request->get('class_id'),
+            'name' => $request->get('name'),
+            'email' => $request->get('email'),
         ]);
         return $paginator;
     }
 
-    // add fees
     public function add_fees($student_id)
     {
         $this->data['getFees'] = $this->getFees($student_id);
@@ -108,14 +88,10 @@ class FeesCollectionController extends Controller
 
     public function store_fees($student_id, Request $request)
     {
-        // dd($request->all());
         try {
             $getStudent = $this->getSingleClass($student_id);
-            // $class_id = $this->getSingleClass($student_id);
 
-            // dd($this->data['paid_amount']);
             $paid_amount = $this->getPaidAmount($student_id, $getStudent->class_id);
-            // dd($this->data['paid_amount']);
 
             if (!empty($request->amount)) {
                 $remainingAmount = $request->total_amount - $paid_amount;
@@ -132,18 +108,7 @@ class FeesCollectionController extends Controller
                     $payment->payment_type = $request->payment_type;
                     $payment->message = $request->message;
                     $payment->created_by = Auth::user()->id;
-                    // AddStudentFeesModel::create([
-                    //     'student_id' => $student_id,
-                    //     'class_id' => $getStudent->class_id,
-                    //     'total_amount' => $remainingAmount,
-                    //     'paid_amount' => $request->amount,
-                    //     'remaining_amount' => $remainingAmount_user,
-                    //     'payment_type' => $request->payment_type,
-                    //     'message' => $request->message,
-                    //     'created_by' => Auth::user()->id,
-                    // ]);
 
-                    $getSetting = BusinessEmailModel::getSingle();
                     if ($request->payment_type == 'Stripe') {
                         $setPublicKey = config('services.stripe.key');
                         $setApiKey = config('services.stripe.secret');
@@ -174,9 +139,15 @@ class FeesCollectionController extends Controller
                         $payment->stripe_session_id = $session['id'];
                         $payment->save();
 
-                        $this->data['session_id'] = $session->id; // Set $session_id here
+                        $this->data['session_id'] = $session->id;
                         Session::put('stripe_session_id', $session->id);
                         $this->data['setPublicKey'] = config('stripe.pk');
+
+                        $admins = User::where('user_type', 1)->get();
+
+                        foreach ($admins as $admin) {
+                            Mail::to($admin->email)->send(new StripePaymentSuccess($payment));
+                        }
 
                         return view('stripe_charge')->with([
                             'session_id' => $this->data['session_id'],
@@ -184,8 +155,9 @@ class FeesCollectionController extends Controller
                             'data' => $this->data,
                         ]);
                     }
-
-                    return redirect()->back()->with('success', 'Fees Successfully Added.');
+                    if ($request->payment_type == 'Cash') {
+                        return redirect()->back()->with('success', 'Fees Successfully Added.');
+                    }
                 } else {
                     return redirect()->back()->with('error', 'Input amount is greater than remaining amount.');
                 }
@@ -199,20 +171,17 @@ class FeesCollectionController extends Controller
 
     public function store_fees_parent_side($student_id, Request $request)
     {
-        // dd($request->all());
         try {
             $getStudent = $this->getSingleClass($student_id);
-            // $class_id = $this->getSingleClass($student_id);
 
-            // dd($this->data['paid_amount']);
             $paid_amount = $this->getPaidAmount($student_id, $getStudent->class_id);
-            // dd($this->data['paid_amount']);
 
             if (!empty($request->amount)) {
                 $remainingAmount = $request->total_amount - $paid_amount;
 
                 if ($remainingAmount >= $request->amount) {
                     $remainingAmount_user = $remainingAmount - $request->amount;
+                    $paymentId = mt_rand(100000, 999999);
 
                     $payment = new AddStudentFeesModel;
                     $payment->student_id  = $student_id;
@@ -221,20 +190,10 @@ class FeesCollectionController extends Controller
                     $payment->paid_amount = $request->amount;
                     $payment->remaining_amount = $remainingAmount_user;
                     $payment->payment_type = $request->payment_type;
+                    $payment->payment_id = $paymentId;
                     $payment->message = $request->message;
                     $payment->created_by = Auth::user()->id;
-                    // AddStudentFeesModel::create([
-                    //     'student_id' => $student_id,
-                    //     'class_id' => $getStudent->class_id,
-                    //     'total_amount' => $remainingAmount,
-                    //     'paid_amount' => $request->amount,
-                    //     'remaining_amount' => $remainingAmount_user,
-                    //     'payment_type' => $request->payment_type,
-                    //     'message' => $request->message,
-                    //     'created_by' => Auth::user()->id,
-                    // ]);
 
-                    $getSetting = BusinessEmailModel::getSingle();
                     if ($request->payment_type == 'Stripe') {
                         $setPublicKey = config('services.stripe.key');
                         $setApiKey = config('services.stripe.secret');
@@ -269,6 +228,12 @@ class FeesCollectionController extends Controller
                         Session::put('stripe_session_id', $session->id);
                         $this->data['setPublicKey'] = config('stripe.pk');
 
+                        $admins = User::where('user_type', 1)->get();
+
+                        foreach ($admins as $admin) {
+                            Mail::to($admin->email)->send(new StripePaymentSuccess($payment));
+                        }
+
                         return view('stripe_charge')->with([
                             'session_id' => $this->data['session_id'],
                             'setPublicKey' => $this->data['setPublicKey'],
@@ -276,9 +241,8 @@ class FeesCollectionController extends Controller
                         ]);
                     }
 
-                    // return redirect()->back()->with('success', 'Fees Successfully Added.');
                 } else {
-                    return redirect()->back()->with('error', 'Input amount is greater than remaining amount.');
+                    return redirect()->back()->with('error', 'You cannot pay more than remaining amount.');
                 }
             } else {
                 return redirect()->back()->with('error', 'You need to add at least 1$.');

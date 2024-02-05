@@ -25,7 +25,6 @@ class ClassSubjectController extends Controller
             'getRecord' => [],
             'getClass' => [],
             'getSubject' => [],
-
         ];
     }
 

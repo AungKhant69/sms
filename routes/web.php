@@ -35,11 +35,11 @@ Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'authLogin']);
 Route::get('logout', [AuthController::class, 'logout']);
 
-Route::get('forgot-password', [AuthController::class, 'forgotpassword']);
-Route::post('forgot-password', [AuthController::class, 'postForgotPassword']);
+Route::get('forgot-password', [AuthController::class, 'forgotpassword'])->name('forgotpassword');
+Route::post('forgot-password', [AuthController::class, 'postForgotPassword'])->name('postForgotPassword');
 
-Route::get('reset/{token}', [AuthController::class, 'reset']);
-Route::post('reset/{token}', [AuthController::class, 'postReset']);
+Route::get('reset/{token}', [AuthController::class, 'reset'])->name('reset');
+Route::post('reset/{token}', [AuthController::class, 'postReset'])->name('postReset');
 
 // ******   Admin routes   ******//
 

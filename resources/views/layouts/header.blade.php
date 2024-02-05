@@ -1,6 +1,5 @@
-<!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
+
     <ul class="navbar-nav">
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
@@ -8,13 +7,13 @@
 
     </ul>
 
-    <!-- Right navbar links -->
+
     <ul class="navbar-nav ml-auto">
         @php
             $getAllChatUserCount = App\Models\ChatModel::getAllChatUserCount();
         @endphp
 
-        <!-- Messages Dropdown Menu -->
+
         <li class="nav-item">
             <a class="nav-link" href="{{ route('chat.index') }}">
                 <i class="far fa-comments"></i>
@@ -23,62 +22,23 @@
             </a>
 
         </li>
-        <!-- Notifications Dropdown Menu -->
-        {{-- <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="far fa-bell"></i>
-                <span class="badge badge-warning navbar-badge">15</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <span class="dropdown-item dropdown-header">15 Notifications</span>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-envelope mr-2"></i> 4 new messages
-                    <span class="float-right text-muted text-sm">3 mins</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-users mr-2"></i> 8 friend requests
-                    <span class="float-right text-muted text-sm">12 hours</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-file mr-2"></i> 3 new reports
-                    <span class="float-right text-muted text-sm">2 days</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-            </div>
-        </li> --}}
 
-
-        {{-- <li class="nav-item">
-            <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                <i class="fas fa-expand-arrows-alt"></i>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#"
-                role="button">
-                <i class="fas fa-th-large"></i>
-            </a>
-        </li> --}}
     </ul>
 </nav>
-<!-- /.navbar -->
 
-<!-- Main Sidebar Container -->
+
+
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
+
     <a href="javascript:;" class="brand-link">
         <img src="{{ url('dist/img/Logo.jpg') }}" alt="Logo" class="brand-image img-circle elevation-3 ml-0"
             style="opacity: 1">
         <span class="brand-text font-weight-bold">PKT Education Center</span>
     </a>
 
-    <!-- Sidebar -->
+
     <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
+
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
                 <img src="{{ asset('storage/uploads/' . Auth::user()->profile_pic) }}" class="img-circle elevation-2"
@@ -336,15 +296,7 @@
                         </a>
                     </li>
 
-                    {{-- <li class="nav-item">
-                        <a href="{{ route('admin.setting') }}"
-                            class="nav-link @if (Request::segment(2) == 'setting') active @endif">
-                            <i class="nav-icon far fas fa-envelope"></i>
-                            <p>
-                                Business Email Setting
-                            </p>
-                        </a>
-                    </li> --}}
+
 
                     {{-- Teacher side --}}
                 @elseif(Auth::user()->user_type == 2)
@@ -628,7 +580,7 @@
 
             </ul>
         </nav>
-        <!-- /.sidebar-menu -->
+
     </div>
-    <!-- /.sidebar -->
+
 </aside>

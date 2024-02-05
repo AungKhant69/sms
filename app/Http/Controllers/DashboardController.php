@@ -7,7 +7,6 @@ use App\Models\ExamModel;
 use App\Helper\FormHelper;
 use App\Models\ClassModel;
 use App\Models\SubjectModel;
-use Illuminate\Http\Request;
 use App\Models\HomeworkModel;
 use App\Models\ClassSubjectModel;
 use App\Models\ExamScheduleModel;

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -11,35 +11,22 @@
                     </div>
 
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <!-- left column -->
+
                     <div class="col-md-12">
 
                         @include('_message')
 
                         <div class="card card-primary">
-                            {{-- {{ route('admin.store') }} --}}
+
                             <form method="POST" action="{{ route('homework.store') }}" enctype="multipart/form-data" novalidate>
                                 @csrf
                                 <div class="card-body">
-
-                                        {{-- <div class="form-group col-md-6">
-                                            <label>Class <span style="color: red;">*</span></label>
-                                            <select class="form-control" name="class_id" required>
-                                                <option value="">Select Class</option>
-                                                @foreach ($data['getClass'] as $class)
-                                                    <option value="{{ $class->id }}">{{ $class->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('class_id')
-                                                <p class="text-danger">{{ $message }}</p>
-                                            @enderror
-                                        </div> --}}
 
                                         <div class="form-group col-md-6">
                                             <label>Subject <span style="color: red;">*</span></label>
@@ -110,9 +97,9 @@
     </div>
 
     </div>
-    <!-- /.row -->
-    </div><!-- /.container-fluid -->
+
+    </div>
     </section>
-    <!-- /.content -->
+
     </div>
 @endsection

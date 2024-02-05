@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -11,13 +11,13 @@
                     </div>
 
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <!-- left column -->
+
                     <div class="col-md-12">
 
                         @include('_message')
@@ -146,9 +146,9 @@
     </div>
 
     </div>
-    <!-- /.row -->
-    </div><!-- /.container-fluid -->
+
+    </div>
     </section>
-    <!-- /.content -->
+
     </div>
 @endsection

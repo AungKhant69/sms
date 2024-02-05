@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,10 +9,6 @@ use App\Http\Requests\UpdateSettingsRequest;
 
 class ProfileController extends Controller
 {
-//     public function __construct()
-// {
-//     $this->middleware('auth');
-// }
 
     public function showSettings()
     {

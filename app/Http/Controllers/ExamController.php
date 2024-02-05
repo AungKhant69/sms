@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreExamRequest;
 use App\Models\AssignClassTeacherModel;
 use App\Http\Requests\UpdateExamRequest;
-use App\Http\Requests\ExamScheduleStoreRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ExamController extends Controller
@@ -243,7 +242,6 @@ class ExamController extends Controller
     public function exam_schedule_store(Request $request)
     {
         $this->deleteSameSchedule($request->exam_id, $request->class_id, $request->schedule);
-        // dd($request->all());
         try {
 
             if (!empty($request->schedule)) {
@@ -323,7 +321,7 @@ class ExamController extends Controller
         }
     }
 
-    //********* Exam Marks Register ********************************
+    //********* Exam Marks Register *************
 
     public function marks_register(Request $request)
     {
@@ -421,14 +419,14 @@ class ExamController extends Controller
                     $existingMark = $this->NoDuplicateMark($request->student_id, $request->exam_id, $request->class_id, $mark['subject_id']);
 
                     if (!empty($existingMark)) {
-                        // Update existing record
+
                         $existingMark->update([
                             'exam_marks' => $exam_marks,
                             'homework_marks' => $homework_marks,
                             'updated_by' => Auth::user()->id,
                         ]);
                     } else {
-                        // Create new record
+
                         MarksRegisterModel::create([
                             'student_id' => $request->student_id,
                             'exam_id' => $request->exam_id,
@@ -445,7 +443,7 @@ class ExamController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
-        // dd($request->all());
+
     }
 
     public function store_marks_register_teacher(Request $request)
@@ -459,14 +457,14 @@ class ExamController extends Controller
                     $existingMark = $this->NoDuplicateMark($request->student_id, $request->exam_id, $request->class_id, $mark['subject_id']);
 
                     if (!empty($existingMark)) {
-                        // Update existing record
+
                         $existingMark->update([
                             'exam_marks' => $exam_marks,
                             'homework_marks' => $homework_marks,
                             'updated_by' => Auth::user()->id,
                         ]);
                     } else {
-                        // Create new record
+
                         MarksRegisterModel::create([
                             'student_id' => $request->student_id,
                             'exam_id' => $request->exam_id,
@@ -483,7 +481,7 @@ class ExamController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
-        // dd($request->all());
+
     }
 
     private function NoDuplicateMark($student_id, $exam_id, $class_id, $subject_id)
@@ -505,7 +503,6 @@ class ExamController extends Controller
             ->get();
 
         $this->data['getRecord'] = $exams;
-        // dd($data['getRecord']);
 
         $this->data['header_title'] = 'My Exam Timetable';
         return view('student.my_exam_timetable')->with([

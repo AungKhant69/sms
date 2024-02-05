@@ -62,10 +62,6 @@ class AssignClassTeacherController extends Controller
                         'status' => $request->status,
                         'created_by' => Auth::user()->id,
                     ]);
-
-                    // $teacher = User::findOrFail($teacher_id);
-                    // $teacher->class_id = $request->class_id;
-                    // $teacher->save();
                 }
             }
 

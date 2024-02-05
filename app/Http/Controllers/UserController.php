@@ -19,30 +19,4 @@ class UserController extends Controller
             'getRecord' => [],
         ];
     }
-
-    public function businessEmail()
-    {
-        $data['getRecord'] = BusinessEmailModel::getSingle();
-        return view('admin.setting')->with([
-            'data' => $this->data,
-        ]);
-    }
-
-    public function updateBusinessEmail(Request $request)
-    {
-        $setting = BusinessEmailModel::getSingle();
-
-        if (!$setting) {
-            // If no record is found, create a new one
-            $setting = new BusinessEmailModel();
-        }
-
-        $setting->stripe_email = $request->stripe_email;
-        $setting->stripe_key = $request->stripe_key;
-        $setting->stripe_secret = $request->stripe_secret;
-
-        $setting->save();
-
-        return redirect()->back()->with('success', 'Business Email has been updated');
-    }
 }

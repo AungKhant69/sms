@@ -21,9 +21,6 @@
                 <button style="margin-top: 10px;" class="btn btn-primary" type="submit">Send</button>
             </div>
         </div>
-        {{-- <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fa fa-send"></i></span>
-        </div>
-        <input type="text" class="form-control" placeholder="Enter text here..."> --}}
+
     </form>
 </div>

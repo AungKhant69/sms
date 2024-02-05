@@ -81,17 +81,6 @@ class HomeworkController extends Controller
 
     public function store(StoreHomeworkRequest $request)
     {
-        // dd($request->all());
-        // $document_file = "";
-        // if (!empty($request->file('document_file'))) {
-        //     $extension = $request->file('document_file')->getClientOriginalExtension();
-        //     $file = $request->file('document_file');
-        //     $randomStr = date('Ymshis') . Str::random(20);
-        //     $filename = strtolower($randomStr) . '.' . $extension;
-        //     $file->storeAs('homework', $filename, 'public');
-        //     $document_file = $filename;
-        // }
-
         if (!empty($request->file('document_file'))) {
             $ext = $request->file('document_file')->getClientOriginalExtension();
             $file = $request->file('document_file');
@@ -116,17 +105,6 @@ class HomeworkController extends Controller
 
     public function store_teacher_side(StoreHomeworkRequest $request)
     {
-        // dd($request->all());
-        // $document_file = "";
-        // if (!empty($request->file('document_file'))) {
-        //     $extension = $request->file('document_file')->getClientOriginalExtension();
-        //     $file = $request->file('document_file');
-        //     $randomStr = date('Ymshis') . Str::random(20);
-        //     $filename = strtolower($randomStr) . '.' . $extension;
-        //     $file->storeAs('homework', $filename, 'public');
-        //     $document_file = $filename;
-        // }
-
         if (!empty($request->file('document_file'))) {
             $ext = $request->file('document_file')->getClientOriginalExtension();
             $file = $request->file('document_file');
@@ -189,11 +167,9 @@ class HomeworkController extends Controller
 
             // Delete the old file if it exists
             if ($homework->document_file) {
-                // Assuming the old file is in the same 'uploads/homework' directory
+
                 File::delete('uploads/homework/' . $homework->document_file);
             }
-
-            // Move the new file to the 'uploads/homework' directory
             $newDocumentFile->move('uploads/homework', $filename);
 
             // Update the document_file field in the database
@@ -225,11 +201,9 @@ class HomeworkController extends Controller
 
             // Delete the old file if it exists
             if ($homework->document_file) {
-                // Assuming the old file is in the same 'uploads/homework' directory
+
                 File::delete('uploads/homework/' . $homework->document_file);
             }
-
-            // Move the new file to the 'uploads/homework' directory
             $newDocumentFile->move('uploads/homework', $filename);
 
             // Update the document_file field in the database
@@ -340,11 +314,9 @@ class HomeworkController extends Controller
 
             // Delete the file if it exists
             if ($homework->document_file) {
-                // Assuming the old file is in the same 'uploads/homework' directory
+
                 File::delete('uploads/homework/' . $homework->document_file);
             }
-
-            // Permanently delete the homework
             $homework->forceDelete();
 
             return redirect('/admin/student_management/homework')->with('success', 'Homework data is permanently deleted');
@@ -366,11 +338,9 @@ class HomeworkController extends Controller
 
             // Delete the file if it exists
             if ($homework->document_file) {
-                // Assuming the old file is in the same 'uploads/homework' directory
+
                 File::delete('uploads/homework/' . $homework->document_file);
             }
-
-            // Permanently delete the homework
             $homework->forceDelete();
 
             return redirect('/teacher/student_management/homework')->with('success', 'Homework data is permanently deleted');

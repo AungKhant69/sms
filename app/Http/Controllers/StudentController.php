@@ -7,12 +7,12 @@ use App\Models\User;
 use App\Helper\FormHelper;
 use App\Models\ClassModel;
 use Illuminate\Support\Str;
+use App\Mail\ClassFeesEmail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\AssignClassTeacherModel;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Requests\UpdateSettingsRequest;
@@ -75,6 +75,8 @@ class StudentController extends Controller
             'profile_pic' => $profile_pic,
             'created_by' => auth()->user()->id,
         ]);
+
+        Mail::to($student->email)->send(new ClassFeesEmail($student));
 
         return redirect('/admin/student/list')->with('success', 'New Student is Added Successfully');
     }
@@ -151,7 +153,7 @@ class StudentController extends Controller
     public function deletedList()
     {
         try {
-            // Fetch soft-deleted records with user_type = 3
+
             $softDeletedRecords = User::onlyTrashed()
                 ->where('user_type', 3)
                 ->get();
@@ -167,7 +169,7 @@ class StudentController extends Controller
     public function restore($id)
     {
         try {
-            // Restore soft-deleted record with user_type = 3
+
             User::withTrashed()
                 ->where('id', $id)
                 ->where('user_type', 3)
@@ -184,7 +186,7 @@ class StudentController extends Controller
     public function forceDelete($id)
     {
         try {
-            // Force delete soft-deleted record with user_type = 3
+
             User::withTrashed()
                 ->where('id', $id)
                 ->where('user_type', 3)

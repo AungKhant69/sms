@@ -170,7 +170,7 @@ class AdminController extends Controller
     public function deletedList()
     {
         try {
-            // Fetch soft-deleted records with user_type = 1
+
             $softDeletedRecords = User::onlyTrashed()
                 ->where('user_type', 1)
                 ->get();
@@ -186,7 +186,7 @@ class AdminController extends Controller
     public function restore($id)
     {
         try {
-            // Restore soft-deleted record with user_type = 1
+
             User::withTrashed()
                 ->where('id', $id)
                 ->where('user_type', 1)
@@ -203,7 +203,7 @@ class AdminController extends Controller
     public function forceDelete($id)
     {
         try {
-            // Force delete soft-deleted record with user_type = 1
+
             User::withTrashed()
                 ->where('id', $id)
                 ->where('user_type', 1)

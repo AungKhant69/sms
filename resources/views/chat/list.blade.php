@@ -230,7 +230,7 @@
                 overflow-x: auto;
                 background: #fff;
                 /* left: -400px;
-                                                            display: none; */
+                display: none; */
                 position: relative;
                 border-bottom: 2px dashed #d1d1d1;
             }
@@ -308,19 +308,15 @@
                                     <div class="input-group-prepend">
                                         <p class="input-group-text" id="getSearchedUser">Chat History</p>
                                     </div>
-                                    {{-- <input type="text" id="getSearch" class="form-control" placeholder="Search...">
-                                    <input type="hidden" id="getReceiverIdDynamic" value="{{ $data['receiver_id'] }}"> --}}
+
                                 </div>
                                 <ul class="list-unstyled chat-list mt-2 mb-0" id="getSearchedUserDynamic">
                                     @include('chat._user')
                                 </ul>
                             </div>
                             <div class="chat" id="getAllChatMessage">
-                                {{-- @if (!empty($getReceiver)) --}}
+
                                 @include('chat._message')
-
-
-                                {{-- @endif --}}
 
                             </div>
                         </div>
@@ -337,18 +333,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone.min.js"></script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.10.0/dist/echo.js"></script>
-    <script src="https://js.pusher.com/7.0/pusher.min.js"></script> --}}
-
-    {{-- <script>
-        window.Echo = new Echo({
-            broadcaster: 'pusher',
-            key: '{{ env('PUSHER_APP_KEY') }}',
-            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-            encrypted: true,
-        });
-    </script> --}}
-
 
     <script type="text/javascript">
         // Set timezone
@@ -358,11 +342,14 @@
         function updateMessageTime() {
             $('.message-data-time').each(function() {
                 var timestamp = $(this).data('timestamp');
+                console.log(timestamp);
                 if (timestamp) {
-                    var formattedTime = moment(timestamp, 'YYYY-MM-DD HH:mm:ss').tz('Asia/Yangons')
-                        .fromNow(); // Replace 'YourTimeZone' with your actual timezone
+                    var formattedTime = moment(timestamp).tz('Asia/Yangon')
+                        .fromNow();
+
                     $(this).text(formattedTime);
                 }
+
             });
         }
 
@@ -385,6 +372,7 @@
                     // Create a new list item based on the message sender
                     var liHtml = '';
                     if (value.sender_id == {{ Auth::user()->id }}) {
+                    console.log(value.created_at);
                         liHtml = '<li class="clearfix" style="list-style-type: none;">' +
                             '<div class="message-data text-right">' +
                             '<span class="message-data-time" data-timestamp="' + value.created_at +
