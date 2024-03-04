@@ -12,9 +12,9 @@ Welcome to the School Management System project! This system is built using the 
 
 - **Attendance Tracking:** Record and monitor student and teacher attendance.
 
-- **Grade Management:** Easily input and manage student grades for different subjects.
+- **Marks Registeration:** Easily input and manage student marks for different subjects.
 
-- **Class Scheduling:** Create and view class schedules for teachers and students.
+- **Exam Scheduling:** Create and view exam schedules for teachers and students.
 
 - **Communication:** Facilitate communication between teachers, students, and parents through the messaging system.
 
